@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>HSSCE — Hemispheric Stabilization & Strategic Calibration Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,600;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Barlow+Condensed:wght@300;400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --void:#04070C;
+  --panel:#080D14;
+  --surface:#0D1520;
+  --border:#1A2535;
+  --border2:#243044;
+  --ink:#B8C8DC;
+  --ink2:#7A90A8;
+  --ink3:#3D5068;
+  --amber:#E8A020;
+  --amber2:#F5C060;
+  --cyan:#00C8A0;
+  --cyan2:#00F0C0;
+  --red:#C04040;
+  --red2:#E05050;
+  --gold:#C89A30;
+}
+html{scroll-behavior:smooth}
+body{background:var(--void);color:var(--ink);font-family:'IBM Plex Mono',monospace;overflow-x:hidden;cursor:crosshair}
+
+/* SCANLINE */
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.08) 2px,rgba(0,0,0,.08) 4px);pointer-events:none;z-index:9998}
+
+/* GRID OVERLAY */
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,200,160,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,160,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+
+/* ── CLASSIFICATION BAR ── */
+.classbar{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  background:var(--amber);
+  display:flex;align-items:center;justify-content:center;
+  padding:4px 0;
+  font-size:10px;font-weight:600;letter-spacing:.22em;color:#000;
+}
+.classbar::before,.classbar::after{content:'// UNCLASSIFIED // OPEN SOURCE INTELLIGENCE // CIVILIAN SAFE //';opacity:.6;margin:0 20px}
+
+/* ── TOP NAV ── */
+nav{
+  position:fixed;top:26px;left:0;right:0;z-index:999;
+  background:rgba(4,7,12,.95);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 40px;
+}
+.nav-logo{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:17px;font-weight:800;letter-spacing:.18em;
+  color:var(--amber);
+}
+.nav-logo span{color:var(--ink2)}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{
+  font-size:10px;letter-spacing:.14em;color:var(--ink3);
+  text-decoration:none;transition:color .2s;
+  text-transform:uppercase;
+}
+.nav-links a:hover{color:var(--cyan)}
+.status-bug{
+  display:flex;align-items:center;gap:7px;
+  border:1px solid rgba(0,200,160,.3);
+  padding:5px 14px;
+  font-size:10px;letter-spacing:.14em;color:var(--cyan);
+}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 6px var(--cyan)}50%{opacity:.3;box-shadow:none}}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:100px 40px 80px;
+  position:relative;z-index:1;
+}
+.hero-classify{
+  font-size:10px;letter-spacing:.24em;color:var(--amber);
+  border:1px solid rgba(232,160,32,.3);padding:4px 16px;
+  margin-bottom:32px;
+  display:inline-block;
+  animation:fadeIn .6s ease .2s both;
+}
+.hero-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(48px,8vw,110px);
+  font-weight:800;line-height:.9;
+  letter-spacing:.04em;color:var(--ink);
+  margin-bottom:16px;
+  animation:fadeIn .8s ease .4s both;
+}
+.hero-title .amber{color:var(--amber)}
+.hero-title .dim{color:var(--ink3)}
+.hero-full{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:clamp(10px,1.2vw,13px);
+  letter-spacing:.12em;color:var(--ink2);
+  margin-bottom:48px;
+  animation:fadeIn .8s ease .6s both;
+  line-height:1.8;
+}
+.hero-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--border);
+  max-width:900px;width:100%;
+  margin:0 auto 48px;
+  border:1px solid var(--border);
+  animation:fadeIn .9s ease .8s both;
+}
+.hero-stat{
+  background:var(--panel);
+  padding:28px 20px;text-align:center;
+}
+.hero-stat-num{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(36px,5vw,56px);
+  font-weight:800;color:var(--amber);
+  line-height:1;margin-bottom:6px;
+}
+.hero-stat-label{font-size:9px;letter-spacing:.16em;color:var(--ink3);text-transform:uppercase}
+
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fadeIn .9s ease 1s both}
+.btn-primary{
+  background:var(--amber);color:#000;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;font-weight:600;letter-spacing:.14em;
+  padding:13px 32px;border:none;cursor:pointer;
+  text-decoration:none;display:inline-block;
+  text-transform:uppercase;transition:all .2s;
+}
+.btn-primary:hover{background:var(--amber2);transform:translateY(-1px)}
+.btn-ghost{
+  background:transparent;color:var(--cyan);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;letter-spacing:.14em;
+  padding:12px 32px;
+  border:1px solid rgba(0,200,160,.4);
+  cursor:pointer;text-decoration:none;display:inline-block;
+  text-transform:uppercase;transition:all .2s;
+}
+.btn-ghost:hover{border-color:var(--cyan2);color:var(--cyan2)}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SECTION ── */
+.section{padding:96px 60px;max-width:1280px;margin:0 auto;position:relative;z-index:1}
+.section-tag{
+  font-size:9px;letter-spacing:.22em;color:var(--amber);
+  text-transform:uppercase;margin-bottom:12px;
+  display:flex;align-items:center;gap:10px;
+}
+.section-tag::before{content:'';width:28px;height:1px;background:var(--amber)}
+.section-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(36px,5vw,64px);
+  font-weight:800;line-height:.95;
+  letter-spacing:.04em;color:var(--ink);
+  margin-bottom:16px;
+}
+.section-title .amber{color:var(--amber)}
+.section-title .cyan{color:var(--cyan)}
+.section-intro{
+  font-family:'Libre Baskerville',serif;
+  font-size:15px;color:var(--ink2);
+  line-height:1.7;max-width:620px;margin-bottom:56px;
+  font-style:italic;
+}
+
+/* ── MISSION STRIP ── */
+.mission-strip{
+  background:var(--surface);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  padding:40px 60px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:0;
+  position:relative;z-index:1;
+}
+.mission-item{
+  padding:20px 32px;
+  border-right:1px solid var(--border);
+  text-align:center;
+}
+.mission-item:last-child{border-right:none}
+.mission-icon{font-size:24px;margin-bottom:10px}
+.mission-label{font-size:10px;letter-spacing:.14em;color:var(--amber);text-transform:uppercase;margin-bottom:6px}
+.mission-body{font-size:12px;color:var(--ink2);line-height:1.5}
+
+/* ── ARCHITECTURE DIAGRAM ── */
+.arch-wrap{
+  background:var(--panel);
+  border:1px solid var(--border);
+  padding:48px;
+  margin-bottom:32px;
+  position:relative;
+  overflow:hidden;
+}
+.arch-wrap::before{
+  content:'ARCHITECTURE // CLASSIFIED DRAFT';
+  position:absolute;top:16px;right:20px;
+  font-size:9px;letter-spacing:.16em;color:var(--ink3);
+}
+
+/* ── LAYER CARDS ── */
+.layers-stack{display:flex;flex-direction:column;gap:2px}
+.layer-card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-left:3px solid var(--amber);
+  padding:28px 32px;
+  display:grid;
+  grid-template-columns:200px 1fr;
+  gap:32px;
+  align-items:start;
+  transition:border-color .2s,background .2s;
+}
+.layer-card:hover{background:var(--surface);border-left-color:var(--cyan)}
+.layer-card.cyan{border-left-color:var(--cyan)}
+.layer-card.red{border-left-color:var(--red)}
+.layer-card.gold{border-left-color:var(--gold)}
+.layer-card.amber2{border-left-color:var(--amber2)}
+.layer-num{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:48px;font-weight:800;
+  color:rgba(232,160,32,.12);
+  line-height:1;margin-bottom:4px;
+}
+.layer-tag{font-size:9px;letter-spacing:.18em;color:var(--amber);text-transform:uppercase;margin-bottom:6px}
+.layer-name{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:22px;font-weight:700;
+  letter-spacing:.06em;color:var(--ink);
+  margin-bottom:0;
+}
+.layer-desc{font-size:13px;color:var(--ink2);line-height:1.65;margin-bottom:12px}
+.layer-tags{display:flex;flex-wrap:wrap;gap:6px}
+.ltag{
+  font-size:9px;letter-spacing:.1em;
+  padding:3px 10px;
+  border:1px solid var(--border2);
+  color:var(--ink3);
+  text-transform:uppercase;
+}
+.ltag.active{border-color:rgba(0,200,160,.3);color:var(--cyan)}
+
+/* ── DOMAIN NODES GRID ── */
+.nodes-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:2px;
+  background:var(--border);
+  border:1px solid var(--border);
+}
+.node-card{
+  background:var(--panel);
+  padding:24px 20px;
+  position:relative;
+  overflow:hidden;
+  transition:background .2s;
+}
+.node-card::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:2px;
+  background:var(--cyan);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .3s ease;
+}
+.node-card:hover{background:var(--surface)}
+.node-card:hover::before{transform:scaleX(1)}
+.node-letter{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:42px;font-weight:800;
+  color:rgba(0,200,160,.1);
+  line-height:1;margin-bottom:10px;
+}
+.node-name{
+  font-size:12px;font-weight:600;letter-spacing:.06em;
+  color:var(--ink);margin-bottom:6px;
+}
+.node-body{font-size:11px;color:var(--ink3);line-height:1.55}
+.node-conf{
+  display:inline-block;margin-top:10px;
+  font-size:9px;letter-spacing:.12em;
+  padding:2px 8px;
+  border:1px solid rgba(0,200,160,.25);
+  color:var(--cyan);text-transform:uppercase;
+}
+
+/* ── TECH STACK ── */
+.stack-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:2px;
+  background:var(--border);
+}
+.stack-item{
+  background:var(--panel);padding:28px 24px;
+  transition:background .2s;
+}
+.stack-item:hover{background:var(--surface)}
+.stack-tier{font-size:9px;letter-spacing:.18em;color:var(--amber);text-transform:uppercase;margin-bottom:8px}
+.stack-name{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:22px;font-weight:700;letter-spacing:.06em;
+  color:var(--ink);margin-bottom:6px;
+}
+.stack-desc{font-size:12px;color:var(--ink2);line-height:1.55}
+.stack-why{font-size:11px;color:var(--cyan);margin-top:8px;font-style:italic}
+
+/* ── CONFIDENCE SYSTEM ── */
+.conf-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:2px;background:var(--border);
+}
+.conf-item{
+  background:var(--panel);
+  padding:28px 20px;text-align:center;
+}
+.conf-bar{height:4px;border-radius:2px;margin:0 auto 16px;transition:width .6s}
+.conf-label{font-size:11px;letter-spacing:.14em;color:var(--ink);font-weight:600;margin-bottom:6px;text-transform:uppercase}
+.conf-range{font-size:13px;font-weight:600;margin-bottom:6px}
+.conf-desc{font-size:11px;color:var(--ink3);line-height:1.5}
+
+/* ── Q&A BLOCKS ── */
+.qa-list{display:flex;flex-direction:column;gap:2px}
+.qa-item{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-left:3px solid var(--border2);
+  overflow:hidden;transition:border-left-color .2s;
+}
+.qa-item:hover{border-left-color:var(--amber)}
+.qa-q{
+  padding:20px 28px;
+  font-size:12px;letter-spacing:.08em;
+  color:var(--amber);cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;
+  user-select:none;
+}
+.qa-q::after{content:'▶';font-size:10px;color:var(--ink3);transition:transform .2s}
+.qa-item.open .qa-q::after{transform:rotate(90deg)}
+.qa-a{
+  max-height:0;overflow:hidden;
+  transition:max-height .4s ease;
+}
+.qa-item.open .qa-a{max-height:600px}
+.qa-a-inner{
+  padding:0 28px 24px;
+  font-family:'Libre Baskerville',serif;
+  font-size:14px;color:var(--ink2);line-height:1.75;
+}
+.qa-a-inner strong{color:var(--cyan);font-family:'IBM Plex Mono',monospace;font-size:12px}
+.qa-a-inner ul{padding-left:20px;margin-top:8px}
+.qa-a-inner li{margin-bottom:4px}
+
+/* ── ROADMAP ── */
+.roadmap{display:flex;flex-direction:column;gap:0;position:relative;padding-left:32px}
+.roadmap::before{
+  content:'';position:absolute;left:8px;top:12px;bottom:12px;
+  width:1px;background:linear-gradient(to bottom,var(--amber),var(--cyan),transparent);
+}
+.road-item{position:relative;padding:0 0 40px 32px}
+.road-dot{
+  position:absolute;left:-6px;top:4px;
+  width:14px;height:14px;border-radius:50%;
+  background:var(--amber);
+  box-shadow:0 0 12px rgba(232,160,32,.4);
+}
+.road-phase{font-size:9px;letter-spacing:.18em;color:var(--amber);text-transform:uppercase;margin-bottom:6px}
+.road-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:22px;font-weight:700;letter-spacing:.06em;
+  color:var(--ink);margin-bottom:8px;
+}
+.road-body{font-size:13px;color:var(--ink2);line-height:1.65;max-width:640px}
+.road-deliverables{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.road-tag{
+  font-size:9px;letter-spacing:.1em;
+  padding:3px 10px;
+  background:rgba(232,160,32,.08);
+  border:1px solid rgba(232,160,32,.2);
+  color:var(--amber);text-transform:uppercase;
+}
+
+/* ── PRINCIPLE GRID ── */
+.principles-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:2px;background:var(--border);
+}
+.principle-item{
+  background:var(--panel);padding:28px 24px;
+}
+.principle-icon{font-size:20px;margin-bottom:12px}
+.principle-name{
+  font-size:12px;font-weight:600;letter-spacing:.1em;
+  color:var(--ink);margin-bottom:8px;text-transform:uppercase;
+}
+.principle-body{font-size:12px;color:var(--ink2);line-height:1.6}
+
+/* ── FOOTER ── */
+footer{
+  background:#020406;
+  border-top:1px solid var(--border);
+  padding:48px 60px 32px;
+  position:relative;z-index:1;
+}
+.footer-grid{
+  display:grid;grid-template-columns:2fr 1fr 1fr;
+  gap:48px;max-width:1280px;margin:0 auto 32px;
+}
+.footer-brand{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:20px;font-weight:800;letter-spacing:.14em;
+  color:var(--amber);margin-bottom:12px;
+}
+.footer-body{font-size:11px;color:var(--ink3);line-height:1.8}
+.footer-heading{font-size:9px;letter-spacing:.2em;color:var(--amber);text-transform:uppercase;margin-bottom:14px}
+.footer-link{display:block;font-size:11px;color:var(--ink3);text-decoration:none;margin-bottom:8px;transition:color .2s}
+.footer-link:hover{color:var(--cyan)}
+.footer-bar{
+  max-width:1280px;margin:0 auto;
+  padding-top:20px;border-top:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:9px;letter-spacing:.12em;color:var(--ink3);
+}
+
+/* ── SVG ARCH DIAGRAM ── */
+.diagram-svg{width:100%;max-width:1100px;margin:0 auto;display:block}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.reveal.vis{opacity:1;transform:none}
+
+/* ── TERMINAL BLOCK ── */
+.terminal{
+  background:#020406;
+  border:1px solid var(--border);
+  border-top:2px solid var(--cyan);
+  padding:28px 32px;
+  font-size:12px;line-height:1.9;
+  color:var(--cyan);
+  position:relative;
+}
+.terminal::before{
+  content:'HSSCE // SYSTEM PROMPT // v1.0';
+  position:absolute;top:-1px;left:16px;
+  background:#020406;padding:0 8px;
+  font-size:9px;letter-spacing:.14em;color:var(--ink3);
+}
+.terminal .t-comment{color:var(--ink3)}
+.terminal .t-key{color:var(--amber)}
+.terminal .t-val{color:var(--ink)}
+.terminal .t-warn{color:var(--red2)}
+
+/* MOBILE */
+@media(max-width:768px){
+  .hero-grid{grid-template-columns:repeat(2,1fr)}
+  .mission-strip{grid-template-columns:1fr 1fr}
+  .mission-item{border-right:none;border-bottom:1px solid var(--border)}
+  .layer-card{grid-template-columns:1fr}
+  .stack-grid{grid-template-columns:1fr}
+  .conf-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr;gap:28px}
+  .section{padding:60px 24px}
+  nav{padding:12px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- CLASSIFICATION BAR -->
+<div class="classbar"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">HSSCE <span>// INTEL PLATFORM</span></div>
+  <div class="nav-links">
+    <a href="#architecture">Architecture</a>
+    <a href="#nodes">Domain Nodes</a>
+    <a href="#stack">Tech Stack</a>
+    <a href="#confidence">Confidence</a>
+    <a href="#roadmap">Roadmap</a>
+    <div class="status-bug"><div class="status-dot"></div>SYSTEM ONLINE</div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-classify">// UNCLASSIFIED // OSINT // CIVILIAN SAFE // McDONALD (2026) //</div>
+  <h1 class="hero-title">
+    <span class="amber">HSSCE</span><br/>
+    <span class="dim">HEMISPHERIC</span><br/>
+    CALIBRATION<br/>
+    <span class="dim">ENGINE</span>
+  </h1>
+  <div class="hero-full">
+    HEMISPHERIC STABILIZATION & STRATEGIC CALIBRATION ENGINE<br/>
+    WCIS v5.2 // NORTH STAR INTELLIGENCE // MULTI-DOMAIN SYNTHESIS<br/>
+    EPOCH FRAMEWORKS LLC · McDONALD (2026) · DACR LICENSE v2.7
+  </div>
+
+  <div class="hero-grid">
+    <div class="hero-stat">
+      <div class="hero-stat-num">5</div>
+      <div class="hero-stat-label">Architecture Layers</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">12</div>
+      <div class="hero-stat-label">Domain Expert Nodes</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">9</div>
+      <div class="hero-stat-label">Scenario Pathways</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">4</div>
+      <div class="hero-stat-label">Confidence Tiers</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">7</div>
+      <div class="hero-stat-label">Escalation Risk Domains</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-num">0</div>
+      <div class="hero-stat-label">Partisan Framing</div>
+    </div>
+  </div>
+
+  <div class="hero-btns">
+    <a href="#architecture" class="btn-primary">Explore Architecture</a>
+    <a href="https://github.com/emcdo411" target="_blank" class="btn-ghost">View on GitHub</a>
+  </div>
+</section>
+
+<!-- MISSION STRIP -->
+<div class="mission-strip">
+  <div class="mission-item">
+    <div class="mission-icon">📡</div>
+    <div class="mission-label">Signal Ingestion</div>
+    <div class="mission-body">Multi-domain OSINT across 15+ source types with timestamping, bias scoring, and narrative polarity mapping</div>
+  </div>
+  <div class="mission-item">
+    <div class="mission-icon">⚖️</div>
+    <div class="mission-label">AICN Calibration</div>
+    <div class="mission-body">Adversarial Intelligence Calibration Node applies domain proximity, track record, and timeliness decay to every signal</div>
+  </div>
+  <div class="mission-item">
+    <div class="mission-icon">🧠</div>
+    <div class="mission-label">Strategic Synthesis</div>
+    <div class="mission-body">9 scenario pathways across optimistic, moderate, adversarial, and destabilization trajectories with confidence ceilings</div>
+  </div>
+  <div class="mission-item">
+    <div class="mission-icon">🎯</div>
+    <div class="mission-label">Decision Superiority</div>
+    <div class="mission-body">Executive-grade outputs: Action Briefs, Escalation Maps, Adversary Next-Move Models, Reversal Condition Trackers</div>
+  </div>
+</div>
+
+<!-- PRIMARY QUESTION -->
+<section class="section reveal">
+  <div class="section-tag">Flagship Use Case</div>
+  <h2 class="section-title">THE PRIMARY<br/><span class="amber">ANALYTICAL</span> QUESTION</h2>
+  <div class="terminal">
+    <span class="t-comment">// PRIMARY INTELLIGENCE QUESTION — CUBA STRATEGIC ASSESSMENT</span><br/><br/>
+    <span class="t-key">QUERY:</span> <span class="t-val">"Under what realistic geopolitical, economic, and strategic conditions</span><br/>
+    <span class="t-val">could Cuba transition from adversarial liability to hemispheric</span><br/>
+    <span class="t-val">stabilization opportunity for the United States while reducing</span><br/>
+    <span class="t-val">escalation risk and improving regional resilience?"</span><br/><br/>
+    <span class="t-comment">// CONSTRAINTS — SYSTEM MUST NOT:</span><br/>
+    <span class="t-warn">PROHIBITED: Advocate regime change</span><br/>
+    <span class="t-warn">PROHIBITED: Advocate military intervention</span><br/>
+    <span class="t-warn">PROHIBITED: Produce propaganda or partisan framing</span><br/>
+    <span class="t-warn">PROHIBITED: Present speculative scenarios as factual predictions</span><br/><br/>
+    <span class="t-comment">// REQUIREMENTS — SYSTEM MUST:</span><br/>
+    <span class="t-key">REQUIRED:</span> <span class="t-val">Model multiple pathways</span><br/>
+    <span class="t-key">REQUIRED:</span> <span class="t-val">Identify structural constraints</span><br/>
+    <span class="t-key">REQUIRED:</span> <span class="t-val">Surface escalation risks with reversal conditions</span><br/>
+    <span class="t-key">REQUIRED:</span> <span class="t-val">Produce probabilistic scenario analysis with confidence ceilings</span>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section class="section reveal" id="architecture">
+  <div class="section-tag">System Design</div>
+  <h2 class="section-title">FIVE-LAYER<br/><span class="amber">ARCHITECTURE</span></h2>
+  <p class="section-intro">Modular, stateful, and hallucination-resistant. Each layer operates independently, outputs to the next, and maintains its own confidence audit trail.</p>
+
+  <!-- SVG ARCHITECTURE DIAGRAM -->
+  <div class="arch-wrap" style="margin-bottom:40px;">
+    <svg class="diagram-svg" viewBox="0 0 1000 320" xmlns="http://www.w3.org/2000/svg">
+      <!-- Background grid -->
+      <defs>
+        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(0,200,160,0.05)" stroke-width="0.5"/>
+        </pattern>
+        <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#E8A020" opacity="0.6"/>
+        </marker>
+      </defs>
+      <rect width="1000" height="320" fill="url(#grid)"/>
+
+      <!-- Layer boxes -->
+      <!-- L1 Signal Ingestion -->
+      <rect x="20" y="30" width="160" height="260" rx="2" fill="#0D1520" stroke="#1A2535" stroke-width="1"/>
+      <rect x="20" y="30" width="160" height="3" fill="#E8A020"/>
+      <text x="100" y="60" text-anchor="middle" fill="#E8A020" font-family="IBM Plex Mono" font-size="9" letter-spacing="2">LAYER 1</text>
+      <text x="100" y="78" text-anchor="middle" fill="#B8C8DC" font-family="Barlow Condensed" font-size="14" font-weight="700" letter-spacing="1">SIGNAL</text>
+      <text x="100" y="94" text-anchor="middle" fill="#B8C8DC" font-family="Barlow Condensed" font-size="14" font-weight="700" letter-spacing="1">INGESTION</text>
+      <text x="100" y="118" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Western Media</text>
+      <text x="100" y="132" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">LatAm Media</text>
+      <text x="100" y="146" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Economic Data</text>
+      <text x="100" y="160" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Petroleum Mkt</text>
+      <text x="100" y="174" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Maritime Data</text>
+      <text x="100" y="188" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Sanctions Data</text>
+      <text x="100" y="202" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Trade Flows</text>
+      <text x="100" y="216" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Think Tank Rpts</text>
+      <text x="100" y="230" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Mil. Indicators</text>
+      <rect x="40" y="248" width="120" height="16" rx="1" fill="rgba(232,160,32,0.1)" stroke="rgba(232,160,32,0.2)" stroke-width="0.5"/>
+      <text x="100" y="260" text-anchor="middle" fill="#E8A020" font-family="IBM Plex Mono" font-size="8">n8n + MCP TOOLS</text>
+
+      <!-- Arrow L1→L2 -->
+      <line x1="182" y1="160" x2="208" y2="160" stroke="#E8A020" stroke-width="1.5" opacity="0.5" marker-end="url(#arrow)"/>
+
+      <!-- L2 AICN Calibration -->
+      <rect x="210" y="30" width="160" height="260" rx="2" fill="#0D1520" stroke="#1A2535" stroke-width="1"/>
+      <rect x="210" y="30" width="160" height="3" fill="#00C8A0"/>
+      <text x="290" y="60" text-anchor="middle" fill="#00C8A0" font-family="IBM Plex Mono" font-size="9" letter-spacing="2">LAYER 2</text>
+      <text x="290" y="78" text-anchor="middle" fill="#B8C8DC" font-family="Barlow Condensed" font-size="14" font-weight="700" letter-spacing="1">SIGNAL</text>
+      <text x="290" y="94" text-anchor="middle" fill="#B8C8DC" font-family="Barlow Condensed" font-size="14" font-weight="700" letter-spacing="1">CALIBRATION</text>
+      <text x="290" y="112" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">(AICN)</text>
+      <text x="290" y="136" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Domain Proximity</text>
+      <text x="290" y="150" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Track Record Score</text>
+      <text x="290" y="164" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Incentive Bias Corr.</text>
+      <text x="290" y="178" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Timeliness Decay</text>
+      <text x="290" y="192" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Conflict Detection</text>
+      <text x="290" y="206" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Residual Uncertainty</text>
+      <rect x="230" y="248" width="120" height="16" rx="1" fill="rgba(0,200,160,0.08)" stroke="rgba(0,200,160,0.2)" stroke-width="0.5"/>
+      <text x="290" y="260" text-anchor="middle" fill="#00C8A0" font-family="IBM Plex Mono" font-size="8">LangGraph NODE</text>
+
+      <!-- Arrow L2→L3 -->
+      <line x1="372" y1="160" x2="398" y2="160" stroke="#E8A020" stroke-width="1.5" opacity="0.5" marker-end="url(#arrow)"/>
+
+      <!-- L3 Domain Nodes -->
+      <rect x="400" y="30" width="160" height="260" rx="2" fill="#0D1520" stroke="#1A2535" stroke-width="1"/>
+      <rect x="400" y="30" width="160" height="3" fill="#C89A30"/>
+      <text x="480" y="60" text-anchor="middle" fill="#C89A30" font-family="IBM Plex Mono" font-size="9" letter-spacing="2">LAYER 3</text>
+      <text x="480" y="78" text-anchor="middle" fill="#B8C8DC" font-family="Barlow Condensed" font-size="14" font-weight="700" letter-spacing="1">DOMAIN</text>
+      <text x="480" y="94" text-anchor="middle" fill="#B8C8DC" font-family="Barlow Condensed" font-size="14" font-weight="700" letter-spacing="1">SPECIALISTS</text>
+      <text x="480" y="118" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">A: Petroleum/Energy</text>
+      <text x="480" y="132" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">B: Maritime/Shipping</text>
+      <text x="480" y="146" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">C: Supply Chain</text>
+      <text x="480" y="160" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">D: Agriculture</text>
+      <text x="480" y="174" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">E: Manufacturing</text>
+      <text x="480" y="188" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">F–L: 7 more nodes</text>
+      <rect x="420" y="248" width="120" height="16" rx="1" fill="rgba(200,154,48,0.08)" stroke="rgba(200,154,48,0.2)" stroke-width="0.5"/>
+      <text x="480" y="260" text-anchor="middle" fill="#C89A30" font-family="IBM Plex Mono" font-size="8">PARALLEL AGENTS</text>
+
+      <!-- Arrow L3→L4 -->
+      <line x1="562" y1="160" x2="588" y2="160" stroke="#E8A020" stroke-width="1.5" opacity="0.5" marker-end="url(#arrow)"/>
+
+      <!-- L4 Strategic Synthesis -->
+      <rect x="590" y="30" width="160" height="260" rx="2" fill="#0D1520" stroke="#1A2535" stroke-width="1"/>
+      <rect x="590" y="30" width="160" height="3" fill="#C04040"/>
+      <text x="670" y="60" text-anchor="middle" fill="#C04040" font-family="IBM Plex Mono" font-size="9" letter-spacing="2">LAYER 4</text>
+      <text x="670" y="78" text-anchor="middle" fill="#B8C8DC" font-family="Barlow Condensed" font-size="14" font-weight="700" letter-spacing="1">STRATEGIC</text>
+      <text x="670" y="94" text-anchor="middle" fill="#B8C8DC" font-family="Barlow Condensed" font-size="14" font-weight="700" letter-spacing="1">SYNTHESIS</text>
+      <text x="670" y="118" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">9 Scenario Pathways</text>
+      <text x="670" y="132" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Escalation Mapping</text>
+      <text x="670" y="146" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Adversary Modeling</text>
+      <text x="670" y="160" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Reversal Conditions</text>
+      <text x="670" y="174" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Confidence Ceilings</text>
+      <text x="670" y="188" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">2nd Order Effects</text>
+      <rect x="610" y="248" width="120" height="16" rx="1" fill="rgba(192,64,64,0.08)" stroke="rgba(192,64,64,0.2)" stroke-width="0.5"/>
+      <text x="670" y="260" text-anchor="middle" fill="#C04040" font-family="IBM Plex Mono" font-size="8">SYNTHESIS ENGINE</text>
+
+      <!-- Arrow L4→L5 -->
+      <line x1="752" y1="160" x2="778" y2="160" stroke="#E8A020" stroke-width="1.5" opacity="0.5" marker-end="url(#arrow)"/>
+
+      <!-- L5 Executive Interface -->
+      <rect x="780" y="30" width="200" height="260" rx="2" fill="#0D1520" stroke="#1A2535" stroke-width="1"/>
+      <rect x="780" y="30" width="200" height="3" fill="#E8A020"/>
+      <text x="880" y="60" text-anchor="middle" fill="#E8A020" font-family="IBM Plex Mono" font-size="9" letter-spacing="2">LAYER 5</text>
+      <text x="880" y="78" text-anchor="middle" fill="#B8C8DC" font-family="Barlow Condensed" font-size="14" font-weight="700" letter-spacing="1">EXECUTIVE</text>
+      <text x="880" y="94" text-anchor="middle" fill="#B8C8DC" font-family="Barlow Condensed" font-size="14" font-weight="700" letter-spacing="1">DECISION INTERFACE</text>
+      <text x="880" y="118" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Action Briefs</text>
+      <text x="880" y="132" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Decision Superiority Rpts</text>
+      <text x="880" y="146" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Hemispheric Risk Maps</text>
+      <text x="880" y="160" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Confidence Charts</text>
+      <text x="880" y="174" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Scenario Timelines</text>
+      <text x="880" y="188" text-anchor="middle" fill="#3D5068" font-family="IBM Plex Mono" font-size="8">Constraint Maps</text>
+      <rect x="800" y="248" width="160" height="16" rx="1" fill="rgba(232,160,32,0.1)" stroke="rgba(232,160,32,0.25)" stroke-width="0.5"/>
+      <text x="880" y="260" text-anchor="middle" fill="#E8A020" font-family="IBM Plex Mono" font-size="8">Next.js + Plotly DASH</text>
+    </svg>
+  </div>
+
+  <div class="layers-stack">
+    <div class="layer-card">
+      <div>
+        <div class="layer-num">01</div>
+        <div class="layer-tag">Signal Ingestion</div>
+        <div class="layer-name">MULTI-DOMAIN<br/>SIGNAL LAYER</div>
+      </div>
+      <div>
+        <div class="layer-desc">Ingests global news (Western, LatAm, Cuban state media), economic data, petroleum markets, maritime shipping, sanctions architecture, trade flows, migration indicators, tourism indicators, agricultural indicators, military movement indicators, think tank reports, and policy doctrine documents. Every signal receives timestamping, source attribution, confidence metadata, source bias indicators, region weighting, and narrative polarity mapping on ingest.</div>
+        <div class="layer-tags">
+          <span class="ltag active">n8n pipelines</span>
+          <span class="ltag active">MCP web tools</span>
+          <span class="ltag">RSS ingestion</span>
+          <span class="ltag">API connectors</span>
+          <span class="ltag">Pinecone vector store</span>
+          <span class="ltag">PostgreSQL audit log</span>
+        </div>
+      </div>
+    </div>
+    <div class="layer-card cyan">
+      <div>
+        <div class="layer-num">02</div>
+        <div class="layer-tag">Signal Calibration</div>
+        <div class="layer-name">AICN<br/>CALIBRATION NODE</div>
+      </div>
+      <div>
+        <div class="layer-desc">The Adversarial Intelligence Calibration Node is the anti-hallucination backbone. It applies domain proximity scoring, track record scoring, incentive bias correction, timeliness decay, empirical vs interpretive hierarchy, and doctrine anchoring to every signal before it reaches a domain node. Generates weighted confidence distributions, signal conflict maps, convergence clusters, and unresolved contradiction zones. Nothing passes through AICN without a confidence score and a conflict flag.</div>
+        <div class="layer-tags">
+          <span class="ltag active">LangGraph stateful node</span>
+          <span class="ltag active">Confidence ceiling enforcement</span>
+          <span class="ltag active">Contradiction flagging</span>
+          <span class="ltag">WCIS v5.2 integrated</span>
+          <span class="ltag">Residual uncertainty tracking</span>
+        </div>
+      </div>
+    </div>
+    <div class="layer-card gold">
+      <div>
+        <div class="layer-num">03</div>
+        <div class="layer-tag">Domain Specialists</div>
+        <div class="layer-name">12 PARALLEL<br/>EXPERT AGENTS</div>
+      </div>
+      <div>
+        <div class="layer-desc">Twelve modular domain agents run in parallel, each isolated from the others. Each agent ingests calibrated signals from AICN, generates scenario outputs for its domain, identifies structural constraints, models second-order effects, and produces confidence-scored conclusions. No agent sees another agent's output — synthesis happens at Layer 4. This isolation prevents cascade bias and keeps confidence scoring independent per domain.</div>
+        <div class="layer-tags">
+          <span class="ltag active">Parallel LangGraph agents</span>
+          <span class="ltag active">Domain-isolated memory</span>
+          <span class="ltag">Independent confidence scoring</span>
+          <span class="ltag">CrewAI parallel execution</span>
+          <span class="ltag">Second-order effect modeling</span>
+        </div>
+      </div>
+    </div>
+    <div class="layer-card red">
+      <div>
+        <div class="layer-num">04</div>
+        <div class="layer-tag">Strategic Synthesis</div>
+        <div class="layer-name">SCENARIO<br/>SYNTHESIS ENGINE</div>
+      </div>
+      <div>
+        <div class="layer-desc">Combines all 12 domain agent outputs into nine scenario pathways (optimistic, moderate, adversarial, destabilization, strategic realignment, economic normalization, Chinese influence expansion, US-Cuba partial thaw, hemispheric trade integration). Generates escalation risk maps across seven domains, adversary next-move modeling, reversal condition tracking, and confidence ceilings. This is where WCIS v5.2 decision superiority logic executes.</div>
+        <div class="layer-tags">
+          <span class="ltag active">WCIS v5.2 decision superiority</span>
+          <span class="ltag active">9 scenario pathways</span>
+          <span class="ltag active">Reversal condition tracker</span>
+          <span class="ltag">7 escalation risk domains</span>
+          <span class="ltag">Adversary next-move modeling</span>
+        </div>
+      </div>
+    </div>
+    <div class="layer-card">
+      <div>
+        <div class="layer-num">05</div>
+        <div class="layer-tag">Executive Interface</div>
+        <div class="layer-name">DECISION<br/>SUPERIORITY UI</div>
+      </div>
+      <div>
+        <div class="layer-desc">The only layer a decision-maker sees. Outputs feel defense-adjacent, clean, operational, and non-partisan. Produces Action Briefs, Decision Superiority Reports, Strategic Stabilization Assessments, Hemispheric Risk Maps, Confidence Distribution Charts, Scenario Timelines, Second-Order Effect Analysis, and Operational Constraint Maps. Every output carries a confidence ceiling label. No output reaches this layer without source attribution and a reversal condition statement.</div>
+        <div class="layer-tags">
+          <span class="ltag active">Next.js executive UI</span>
+          <span class="ltag active">Plotly confidence charts</span>
+          <span class="ltag">PDF brief generation</span>
+          <span class="ltag">FastAPI data layer</span>
+          <span class="ltag">Source citation required</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOMAIN NODES -->
+<section class="section reveal" id="nodes">
+  <div class="section-tag">Layer 3 — Domain Specialists</div>
+  <h2 class="section-title">12 <span class="cyan">EXPERT</span> NODES</h2>
+  <p class="section-intro">Each node operates in isolation. Each generates its own confidence-scored conclusion. No node sees another's output before Layer 4 synthesis.</p>
+
+  <div class="nodes-grid">
+    <div class="node-card"><div class="node-letter">A</div><div class="node-name">Petroleum & Refinery Economics</div><div class="node-body">Cuban energy dependency, Venezuelan supply chain risk, refinery capacity constraints, US energy normalization scenarios, pricing models</div><div class="node-conf">HIGH SIGNAL DENSITY</div></div>
+    <div class="node-card"><div class="node-letter">B</div><div class="node-name">Maritime & Shipping Logistics</div><div class="node-body">Port capacity at Havana, Mariel SEZ throughput, Caribbean shipping lane optimization, sanctions-era routing patterns</div><div class="node-conf">MODERATE CONFIDENCE</div></div>
+    <div class="node-card"><div class="node-letter">C</div><div class="node-name">Caribbean Supply Chain Architecture</div><div class="node-body">Nearshore resilience modeling, Panama Canal dependency, US-Cuba bilateral trade potential, supply chain redundancy mapping</div><div class="node-conf">MODERATE CONFIDENCE</div></div>
+    <div class="node-card"><div class="node-letter">D</div><div class="node-name">Agricultural Stabilization</div><div class="node-body">Cuban food production capacity, US agricultural export potential, soil viability, climate-adjusted yield modeling, food security indices</div><div class="node-conf">MODERATE CONFIDENCE</div></div>
+    <div class="node-card"><div class="node-letter">E</div><div class="node-name">Nearshore Manufacturing Opportunity</div><div class="node-body">Labor cost arbitrage, manufacturing zone potential, Chinese manufacturing displacement scenarios, US nearshoring incentive alignment</div><div class="node-conf">LOW CONFIDENCE</div></div>
+    <div class="node-card"><div class="node-letter">F</div><div class="node-name">Migration Pressure Modeling</div><div class="node-body">Cuban emigration drivers, US southern border pressure vectors, migration normalization scenarios, diaspora influence mapping</div><div class="node-conf">HIGH SIGNAL DENSITY</div></div>
+    <div class="node-card"><div class="node-letter">G</div><div class="node-name">Strategic Deterrence & Military Posture</div><div class="node-body">Cuban military capability assessment, Russian/Chinese basing risk, SOUTHCOM proximity implications, deterrence equilibrium modeling</div><div class="node-conf">FRAGMENTED SIGNAL</div></div>
+    <div class="node-card"><div class="node-letter">H</div><div class="node-name">Chinese & Russian Influence Mapping</div><div class="node-body">PRC infrastructure investment in Cuba, Russian military advisory presence, Belt & Road Caribbean extension scenarios, influence displacement modeling</div><div class="node-conf">MODERATE CONFIDENCE</div></div>
+    <div class="node-card"><div class="node-letter">I</div><div class="node-name">Tourism Recovery Modeling</div><div class="node-body">Pre-embargo tourism baseline, US traveler demand modeling, hotel capacity restoration timelines, tourism-driven GDP stabilization scenarios</div><div class="node-conf">HIGH CONFIDENCE</div></div>
+    <div class="node-card"><div class="node-letter">J</div><div class="node-name">Sanctions & Economic Pressure Architecture</div><div class="node-body">OFAC sanctions structure, partial thaw precedent analysis, CAATSA implications, sanctions unwinding sequencing models</div><div class="node-conf">HIGH CONFIDENCE</div></div>
+    <div class="node-card"><div class="node-letter">K</div><div class="node-name">Domestic US Political Viability</div><div class="node-body">Congressional appetite modeling, Cuban-American diaspora political pressure, bipartisan normalization pathway analysis, electoral constraint mapping</div><div class="node-conf">FRAGMENTED SIGNAL</div></div>
+    <div class="node-card"><div class="node-letter">L</div><div class="node-name">Infrastructure Modernization Requirements</div><div class="node-body">Power grid rehabilitation cost modeling, telecommunications modernization, port infrastructure investment requirements, multilateral financing scenarios</div><div class="node-conf">MODERATE CONFIDENCE</div></div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section class="section reveal" id="stack">
+  <div class="section-tag">Technical Architecture</div>
+  <h2 class="section-title">RECOMMENDED<br/><span class="amber">TECH STACK</span></h2>
+  <p class="section-intro">Hybrid orchestration: LangGraph stateful multi-agent + RAG signal retrieval + MCP live data tools. Not pure MCP. Not pure multi-agent. The domain nodes require independent state and memory that only LangGraph provides at production grade.</p>
+
+  <div class="stack-grid">
+    <div class="stack-item">
+      <div class="stack-tier">Orchestration</div>
+      <div class="stack-name">LangGraph</div>
+      <div class="stack-desc">Stateful graph-based orchestration with checkpointing. Each domain node is a graph node. AICN is a required gate node — no domain node executes without AICN clearance. Supports human-in-the-loop escalation gates.</div>
+      <div class="stack-why">Why: Only production-grade framework that handles stateful multi-agent workflows with auditable checkpoints at every step.</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-tier">Reasoning Engine</div>
+      <div class="stack-name">Claude Sonnet</div>
+      <div class="stack-desc">Primary LLM layer for all domain agent reasoning, synthesis, and executive brief generation. Extended thinking enabled for synthesis layer. Structured output enforced at every node via XML schema.</div>
+      <div class="stack-why">Why: Best-in-class reasoning with explicit uncertainty acknowledgment. Resists confidence inflation when prompted correctly.</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-tier">Signal Retrieval</div>
+      <div class="stack-name">Pinecone + RAG</div>
+      <div class="stack-desc">Vector store for all ingested signals, doctrine documents, think tank reports, and historical intelligence. Hybrid search (dense + sparse) ensures both semantic and keyword retrieval across 15+ signal types.</div>
+      <div class="stack-why">Why: Persistent signal memory that domain nodes can query independently without cross-contamination.</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-tier">Signal Ingestion</div>
+      <div class="stack-name">n8n + MCP</div>
+      <div class="stack-desc">n8n handles scheduled RSS, API polling, and webhook ingestion pipelines. MCP tools provide live web search, maritime AIS data, FRED economic data, and UN trade flow access at runtime.</div>
+      <div class="stack-why">Why: Separates ingestion infrastructure from reasoning layer. Signals arrive timestamped and bias-tagged before LangGraph sees them.</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-tier">Structured Storage</div>
+      <div class="stack-name">PostgreSQL + Redis</div>
+      <div class="stack-desc">PostgreSQL for audit logs, source attribution tables, confidence history, and reversal condition tracking. Redis for real-time signal cache and inter-agent state during active synthesis runs.</div>
+      <div class="stack-why">Why: Audit defensibility. Every confidence score and source citation is traceable to a specific signal event in PostgreSQL.</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-tier">Parallel Execution</div>
+      <div class="stack-name">CrewAI</div>
+      <div class="stack-desc">Manages parallel execution of the 12 domain specialist agents at Layer 3. Each agent runs independently with its own memory context. CrewAI's task delegation ensures no agent contaminates another's output.</div>
+      <div class="stack-why">Why: LangGraph handles stateful orchestration; CrewAI handles parallel agent delegation. They compose cleanly.</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-tier">Executive UI</div>
+      <div class="stack-name">Next.js + Plotly</div>
+      <div class="stack-desc">Next.js serves the executive decision interface. Plotly renders confidence distribution charts, scenario timelines, and escalation risk maps. All outputs carry confidence ceiling labels in the UI — no clean number without a tier badge.</div>
+      <div class="stack-why">Why: Plotly is the FRED-standard for intelligence visualization. Fast, embeddable, and credible in executive contexts.</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-tier">API Layer</div>
+      <div class="stack-name">FastAPI</div>
+      <div class="stack-desc">RESTful API layer connecting LangGraph orchestration to the Next.js UI. Handles authentication, rate limiting, output caching, and brief generation endpoints. Supports PDF export of all executive outputs.</div>
+      <div class="stack-why">Why: Async-native, fast, and OpenAPI-documented. Every output endpoint is auditable.</div>
+    </div>
+    <div class="stack-item">
+      <div class="stack-tier">Deployment</div>
+      <div class="stack-name">Docker + Vercel</div>
+      <div class="stack-desc">LangGraph orchestration and CrewAI agents containerized in Docker. Next.js executive UI deployed on Vercel edge. Pinecone and PostgreSQL managed via cloud-native services. Monitoring via Langfuse for agent trace observability.</div>
+      <div class="stack-why">Why: Langfuse provides trace-level visibility into every agent decision — essential for hallucination auditing.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONFIDENCE SYSTEM -->
+<section class="section reveal" id="confidence">
+  <div class="section-tag">Anti-Hallucination Architecture</div>
+  <h2 class="section-title">CONFIDENCE<br/><span class="cyan">CEILING SYSTEM</span></h2>
+  <p class="section-intro">No output ships without a confidence tier label. Confidence inflation — presenting LOW-tier conclusions with HIGH-tier certainty — is the primary failure mode this system is designed to prevent.</p>
+
+  <div class="conf-grid" style="margin-bottom:40px;">
+    <div class="conf-item">
+      <div class="conf-bar" style="width:90%;background:var(--cyan)"></div>
+      <div class="conf-label" style="color:var(--cyan)">HIGH</div>
+      <div class="conf-range" style="color:var(--cyan)">75–100%</div>
+      <div class="conf-desc">Multiple independent corroborating signals. No material contradictions. Track-record-verified sources. Doctrine-anchored. Reversal condition clearly stated.</div>
+    </div>
+    <div class="conf-item">
+      <div class="conf-bar" style="width:62%;background:var(--amber)"></div>
+      <div class="conf-label" style="color:var(--amber)">MODERATE</div>
+      <div class="conf-range" style="color:var(--amber)">50–74%</div>
+      <div class="conf-desc">Corroborating signals present but with at least one unresolved contradiction. Source quality varies. Conclusion plausible but not convergent across all domains.</div>
+    </div>
+    <div class="conf-item">
+      <div class="conf-bar" style="width:37%;background:var(--gold)"></div>
+      <div class="conf-label" style="color:var(--gold)">LOW</div>
+      <div class="conf-range" style="color:var(--gold)">25–49%</div>
+      <div class="conf-desc">Limited corroboration. Significant contradictions unresolved. High interpretive component. Signal environment sparse for this domain. Use for scenario awareness only.</div>
+    </div>
+    <div class="conf-item">
+      <div class="conf-bar" style="width:15%;background:var(--red)"></div>
+      <div class="conf-label" style="color:var(--red)">FRAGMENTED</div>
+      <div class="conf-range" style="color:var(--red)">&lt;25%</div>
+      <div class="conf-desc">Signal environment too contradictory or sparse to support meaningful conclusions. Output is hypothesis only. Domain node flags for human analyst review before synthesis proceeds.</div>
+    </div>
+  </div>
+
+  <div class="principles-grid">
+    <div class="principle-item">
+      <div class="principle-icon">🚫</div>
+      <div class="principle-name">No Confidence Laundering</div>
+      <div class="principle-body">Structured output schemas enforce confidence tier labels at every node output. A domain agent cannot return a conclusion without a tier. The synthesis engine cannot aggregate across tiers without downgrading to the lowest contributing tier.</div>
+    </div>
+    <div class="principle-item">
+      <div class="principle-icon">📋</div>
+      <div class="principle-name">Source Citation Required</div>
+      <div class="principle-body">Every factual claim in an output must be traced to a signal event in PostgreSQL. The executive UI renders a source count badge on every conclusion. Zero-source claims are blocked at the FastAPI layer.</div>
+    </div>
+    <div class="principle-item">
+      <div class="principle-icon">🔄</div>
+      <div class="principle-name">Reversal Conditions Mandatory</div>
+      <div class="principle-body">Every scenario pathway and every domain conclusion must state what evidence would invalidate it. Reversal conditions are displayed in the executive UI alongside the conclusion — not buried in a footnote.</div>
+    </div>
+    <div class="principle-item">
+      <div class="principle-icon">👤</div>
+      <div class="principle-name">Human Escalation Gates</div>
+      <div class="principle-body">FRAGMENTED-tier signals trigger mandatory human analyst review before the synthesis engine incorporates them. LangGraph's interrupt() mechanism pauses execution and flags the gate in the UI dashboard.</div>
+    </div>
+    <div class="principle-item">
+      <div class="principle-icon">🔍</div>
+      <div class="principle-name">Langfuse Trace Observability</div>
+      <div class="principle-body">Every agent decision, tool call, and confidence assignment is traced in Langfuse. Post-run audits can reconstruct exactly how any conclusion was reached. This is the hallucination forensics layer.</div>
+    </div>
+    <div class="principle-item">
+      <div class="principle-icon">⚖️</div>
+      <div class="principle-name">Adversary Modeling Protocol</div>
+      <div class="principle-body">Adversary next-move modeling is constrained to doctrine-anchored behavioral patterns only. No speculative attribution. Every adversary model cites the doctrine source. Outputs are labeled BEHAVIORAL PROJECTION, not INTELLIGENCE ASSESSMENT.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Q&A — THE 12 QUESTIONS -->
+<section class="section reveal">
+  <div class="section-tag">Architecture Decisions</div>
+  <h2 class="section-title">THE 12<br/><span class="amber">DESIGN ANSWERS</span></h2>
+  <p class="section-intro">Every major architectural question from the system specification, answered with precision.</p>
+
+  <div class="qa-list">
+    <div class="qa-item">
+      <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">01 · Multi-agent, MCP, RAG, or hybrid? What orchestration model?</div>
+      <div class="qa-a"><div class="qa-a-inner">
+        <strong>VERDICT: HYBRID — LangGraph stateful multi-agent + RAG + MCP tools.</strong><br/><br/>
+        Pure MCP cannot manage the stateful memory requirements of 12 parallel domain nodes. Pure multi-agent without RAG produces hallucinated signals because agents fabricate what they cannot retrieve. Pure RAG without agents cannot perform the layered reasoning that escalation modeling requires.<br/><br/>
+        The correct architecture: <ul><li>LangGraph as the stateful orchestration backbone — graph nodes for each layer, checkpointing at every gate</li><li>CrewAI for parallel domain agent execution at Layer 3</li><li>Pinecone RAG for signal retrieval — agents query, they do not generate signals</li><li>MCP tools for live data access at ingestion time (web search, maritime AIS, FRED, UN trade)</li></ul>
+        This is how Palantir's Gotham architecture works at a high level — orchestration layer on top, specialized agents below, retrieval layer as the knowledge base.
+      </div></div>
+    </div>
+    <div class="qa-item">
+      <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">02 · Ideal workflow design</div>
+      <div class="qa-a"><div class="qa-a-inner">
+        <strong>SIGNAL → AICN GATE → PARALLEL DOMAIN AGENTS → SYNTHESIS → HUMAN REVIEW GATE → EXECUTIVE OUTPUT</strong><br/><br/>
+        n8n ingestion pipelines run on schedule and webhook triggers. Signals arrive in Pinecone tagged with source metadata. When a query is initiated, LangGraph starts execution: AICN calibration runs first (mandatory gate), then 12 domain agents execute in parallel via CrewAI, then synthesis engine aggregates outputs into scenario pathways. If any domain returns FRAGMENTED confidence, a human review interrupt fires before synthesis proceeds. Final output goes to FastAPI → Next.js executive UI.<br/><br/>
+        Estimated execution time per full synthesis run: 4–8 minutes. Action briefs: 45–90 seconds.
+      </div></div>
+    </div>
+    <div class="qa-item">
+      <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">03 · Memory architecture design</div>
+      <div class="qa-a"><div class="qa-a-inner">
+        Four memory types, each serving a distinct function:<br/><br/>
+        <strong>WORKING MEMORY (Redis):</strong> Current synthesis run context. Cleared after each run. Prevents cross-run contamination.<br/>
+        <strong>EPISODIC MEMORY (PostgreSQL):</strong> Historical signal events, past synthesis runs, confidence score history, reversal condition tracking over time.<br/>
+        <strong>SEMANTIC MEMORY (Pinecone):</strong> All ingested signals, doctrine documents, think tank reports, and policy papers as vector embeddings. Queried by domain agents via RAG.<br/>
+        <strong>PROCEDURAL MEMORY (LangGraph graph definition):</strong> The WCIS v5.2 and North Star methodologies encoded as graph structure — the system knows how to reason, not just what to retrieve.
+      </div></div>
+    </div>
+    <div class="qa-item">
+      <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">04 · How to prevent hallucination and confidence inflation</div>
+      <div class="qa-a"><div class="qa-a-inner">
+        <strong>Six enforcement mechanisms, not one:</strong><br/><br/>
+        <ul>
+          <li><strong>Structured output schemas</strong> at every agent output — confidence tier is a required enum field, not a free-text field</li>
+          <li><strong>Source citation enforcement</strong> — FastAPI blocks any output with zero source references from reaching the executive UI</li>
+          <li><strong>AICN mandatory gate</strong> — no signal reaches a domain agent without a calibration score; raw signals are never reasoned over directly</li>
+          <li><strong>Confidence downgrade rule</strong> — synthesis engine outputs cannot exceed the confidence tier of the lowest-confidence contributing domain node</li>
+          <li><strong>Reversal condition requirement</strong> — every conclusion must include a falsification statement or it is rejected by the output schema validator</li>
+          <li><strong>Langfuse trace audit</strong> — post-run forensics can identify any hallucinated claim by tracing the agent decision back to its retrieval call</li>
+        </ul>
+      </div></div>
+    </div>
+    <div class="qa-item">
+      <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">05 · How to modularize WCIS v5.2 and North Star Intelligence</div>
+      <div class="qa-a"><div class="qa-a-inner">
+        <strong>WCIS v5.2</strong> maps directly to the synthesis layer (Layer 4). Its decision superiority framework becomes the scenario pathway generator. Its AICN signal weighting protocol becomes the Layer 2 calibration node. Its adversarial modeling becomes the adversary next-move engine within Layer 4. Its battlespace awareness sub-layer becomes the escalation risk map generator.<br/><br/>
+        <strong>North Star Intelligence</strong> maps to Layer 1 (signal ingestion) and AICN calibration. Its source registry (10-country tiers, global wire anchors) becomes the source bias metadata table. Its Ad Fontes triangulation protocol becomes a calibration function within AICN. Its narrative polarity mapping becomes a required field on every ingested signal.<br/><br/>
+        Both frameworks are encoded as LangGraph subgraphs — callable as modular components, not hardcoded into the main orchestration flow. This allows version upgrades (WCIS v5.3, North Star v5.0) without rebuilding the architecture.
+      </div></div>
+    </div>
+    <div class="qa-item">
+      <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">06 · Executive UI/UX philosophy</div>
+      <div class="qa-a"><div class="qa-a-inner">
+        <strong>Three design rules that make this feel like a defense-adjacent intelligence platform rather than a news dashboard:</strong><br/><br/>
+        <ul>
+          <li><strong>Every conclusion carries a visible confidence tier badge.</strong> No clean number without a tier. The badge is color-coded and always visible — not tucked in a tooltip.</li>
+          <li><strong>Reversal conditions are surface-level, not buried.</strong> On every scenario card, the reversal condition appears directly below the conclusion. This forces the reader to engage with uncertainty, not ignore it.</li>
+          <li><strong>Action Briefs are one page maximum.</strong> The synthesis engine generates long-form assessments. The executive UI extracts the Action Brief automatically — four sections: Situation, Key Signals, Scenario Pathway, Recommended Watch Items. No scroll required for the brief. Depth is available on demand.</li>
+        </ul>
+      </div></div>
+    </div>
+    <div class="qa-item">
+      <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">07 · How to structure adversary modeling safely and credibly</div>
+      <div class="qa-a"><div class="qa-a-inner">
+        <strong>Three constraints that keep adversary modeling credible rather than conspiratorial:</strong><br/><br/>
+        <ul>
+          <li><strong>Doctrine-anchored only.</strong> Every adversary behavioral projection must cite a published doctrine, policy document, or historical behavioral pattern. The system cannot project behavior that isn't grounded in a documented precedent.</li>
+          <li><strong>Labeled BEHAVIORAL PROJECTION, not INTELLIGENCE ASSESSMENT.</strong> The output schema enforces this distinction. A behavioral projection based on PRC Belt & Road doctrine is not the same as an intelligence assessment of PRC intentions.</li>
+          <li><strong>Confidence ceiling on adversary nodes defaults to MODERATE maximum.</strong> Adversary intent is inherently opaque. The system enforces this epistemically — no adversary modeling output can reach HIGH confidence without explicit human analyst override and justification in the audit log.</li>
+        </ul>
+      </div></div>
+    </div>
+    <div class="qa-item">
+      <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">08 · How this becomes a show-stopping executive platform without appearing extreme</div>
+      <div class="qa-a"><div class="qa-a-inner">
+        <strong>The answer is epistemic discipline, not restraint.</strong><br/><br/>
+        What makes intelligence platforms appear extreme or conspiratorial is when they present low-confidence conclusions with high-confidence framing. HSSCE prevents this architecturally — the confidence ceiling system makes uncertainty visible, which paradoxically increases credibility with sophisticated executive audiences.<br/><br/>
+        The RAND Corporation is trusted not because it is always right but because it is always calibrated. The platform should feel like RAND: conservative in its claims, precise in its uncertainty, and rigorous in its sourcing.<br/><br/>
+        The show-stopping moment is not a dramatic prediction. It is when an executive sees a scenario pathway they hadn't considered, with a clear reversal condition, supported by sources they can verify, at a confidence tier they can trust. That is decision superiority — and no news feed, no geopolitical pundit, and no legacy intelligence dashboard delivers it in that form.
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section class="section reveal" id="roadmap">
+  <div class="section-tag">Phased Implementation</div>
+  <h2 class="section-title">BUILD<br/><span class="amber">ROADMAP</span></h2>
+  <p class="section-intro">Four phases from architecture to full production deployment. Each phase is independently valuable. Phase 1 alone is a credible proof-of-concept for executive demonstration.</p>
+
+  <div class="roadmap">
+    <div class="road-item">
+      <div class="road-dot"></div>
+      <div class="road-phase">Phase 1 · Weeks 1–4</div>
+      <div class="road-title">SIGNAL FOUNDATION + AICN GATE</div>
+      <div class="road-body">Build the n8n ingestion pipelines for 5 primary source types (Western media, economic data, petroleum, maritime, sanctions). Stand up Pinecone with initial signal corpus. Build the AICN calibration node in LangGraph. Validate confidence scoring against known historical signal events. Deploy WCIS v5.2 and North Star as LangGraph subgraph modules.</div>
+      <div class="road-deliverables">
+        <span class="road-tag">n8n pipelines live</span>
+        <span class="road-tag">Pinecone corpus seeded</span>
+        <span class="road-tag">AICN node validated</span>
+        <span class="road-tag">WCIS/NorthStar modularized</span>
+      </div>
+    </div>
+    <div class="road-item">
+      <div class="road-dot" style="background:var(--cyan);box-shadow:0 0 12px rgba(0,200,160,.4)"></div>
+      <div class="road-phase">Phase 2 · Weeks 5–10</div>
+      <div class="road-title">DOMAIN NODES + PARALLEL EXECUTION</div>
+      <div class="road-body">Build and validate all 12 domain specialist agents. Start with highest-signal-density nodes (Petroleum, Tourism, Sanctions, Migration). Configure CrewAI parallel execution. Validate domain isolation — confirm no cross-contamination between agent memory contexts. Build the synthesis engine with 4 initial scenario pathways. Stand up FastAPI data layer.</div>
+      <div class="road-deliverables">
+        <span class="road-tag">12 domain agents deployed</span>
+        <span class="road-tag">CrewAI parallel execution</span>
+        <span class="road-tag">Synthesis engine v1</span>
+        <span class="road-tag">FastAPI layer live</span>
+      </div>
+    </div>
+    <div class="road-item">
+      <div class="road-dot" style="background:var(--gold);box-shadow:0 0 12px rgba(200,154,48,.4)"></div>
+      <div class="road-phase">Phase 3 · Weeks 11–16</div>
+      <div class="road-title">FULL SYNTHESIS + EXECUTIVE UI</div>
+      <div class="road-body">Expand to all 9 scenario pathways. Build escalation risk maps across 7 domains. Implement adversary next-move modeling with doctrine anchoring. Stand up Next.js executive UI with Plotly confidence charts. Implement Langfuse trace observability. Build PDF Action Brief export. Configure human escalation gates for FRAGMENTED-tier signals.</div>
+      <div class="road-deliverables">
+        <span class="road-tag">9 scenario pathways</span>
+        <span class="road-tag">Next.js UI live</span>
+        <span class="road-tag">Langfuse observability</span>
+        <span class="road-tag">Action Brief export</span>
+        <span class="road-tag">Human escalation gates</span>
+      </div>
+    </div>
+    <div class="road-item">
+      <div class="road-dot" style="background:var(--red);box-shadow:0 0 12px rgba(192,64,64,.4)"></div>
+      <div class="road-phase">Phase 4 · Weeks 17–24</div>
+      <div class="road-title">PRODUCTION + ADDITIONAL THEATER MODULES</div>
+      <div class="road-body">Harden the system for multi-user executive access. Build a second theater module beyond Cuba (candidate: Venezuela energy architecture, or Caribbean-wide Chinese infrastructure). Develop the white-label architecture for potential government or think tank licensing. Build the public GitHub Pages intelligence brief surface for each active theater. Consider DACR v2.7 IP licensing structure for institutional clients.</div>
+      <div class="road-deliverables">
+        <span class="road-tag">Multi-user access</span>
+        <span class="road-tag">Theater 2 module</span>
+        <span class="road-tag">GitHub Pages surface</span>
+        <span class="road-tag">Institutional licensing model</span>
+        <span class="road-tag">DACR v2.7 structure</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">EPOCH FRAMEWORKS LLC</div>
+      <div class="footer-body">Fort Worth, TX · Operational Intelligence · AI Adoption Architecture · Fractional CXO<br/><br/>HSSCE is a civilian-safe, open-source intelligence platform. It is not a prediction engine. It is not a partisan political tool. It does not replace human intelligence analysts. It produces calibrated assessments with explicit uncertainty handling for executive-level operators.<br/><br/>All frameworks protected under DACR License v2.7. McDonald (2026).</div>
+    </div>
+    <div>
+      <div class="footer-heading">Architecture Layers</div>
+      <a href="#architecture" class="footer-link">L1 — Signal Ingestion</a>
+      <a href="#architecture" class="footer-link">L2 — AICN Calibration</a>
+      <a href="#nodes" class="footer-link">L3 — Domain Specialists</a>
+      <a href="#architecture" class="footer-link">L4 — Strategic Synthesis</a>
+      <a href="#architecture" class="footer-link">L5 — Executive Interface</a>
+    </div>
+    <div>
+      <div class="footer-heading">Frameworks Integrated</div>
+      <a href="#" class="footer-link">WCIS v5.2</a>
+      <a href="#" class="footer-link">North Star Intelligence</a>
+      <a href="#" class="footer-link">AICN Signal Protocol</a>
+      <a href="#" class="footer-link">EBT v2.7</a>
+      <a href="#" class="footer-link">DACR License v2.7</a>
+    </div>
+  </div>
+  <div class="footer-bar">
+    <span>© 2026 EPOCH FRAMEWORKS LLC · DACR LICENSE v2.7 · McDONALD (2026) · UNCLASSIFIED // OSINT // CIVILIAN SAFE</span>
+    <span>HSSCE v1.0 · HEMISPHERIC STABILIZATION & STRATEGIC CALIBRATION ENGINE</span>
+  </div>
+</footer>
+
+<script>
+// Scroll reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('vis'); });
+}, {threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// Confidence bars animate on scroll
+const confObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){
+      document.querySelectorAll('.conf-bar').forEach(b => {
+        const w = b.style.width;
+        b.style.width = '0%';
+        setTimeout(()=>{ b.style.width = w; },100);
+      });
+      confObs.disconnect();
+    }
+  });
+},{threshold:0.3});
+const confSection = document.querySelector('.conf-grid');
+if(confSection) confObs.observe(confSection);
+</script>
+</body>
+</html>
