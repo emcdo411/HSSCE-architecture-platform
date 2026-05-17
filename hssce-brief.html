@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HSSCE — Strategic Intelligence Platform · Epoch Frameworks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0B0E14;
+  --paper: #F5F2EC;
+  --amber: #C8860A;
+  --amber-light: #F5D88A;
+  --amber-dim: #6B4A08;
+  --teal: #1A7A60;
+  --teal-light: #C8EDE3;
+  --red: #8C2020;
+  --mid: #3A3D44;
+  --muted: #7A7D85;
+  --rule: rgba(11,14,20,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: 'DM Mono', monospace;
+  font-weight: 300;
+  font-size: 14px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── CLASSIFICATION BAR ── */
+.classbar {
+  background: var(--amber);
+  color: var(--ink);
+  text-align: center;
+  padding: 5px 20px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .2em;
+}
+
+/* ── NAV ── */
+nav {
+  border-bottom: 1px solid rgba(245,242,236,.08);
+  padding: 14px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  background: rgba(11,14,20,.96);
+  backdrop-filter: blur(8px);
+  z-index: 100;
+}
+.nav-logo {
+  font-size: 11px;
+  letter-spacing: .16em;
+  color: var(--amber);
+  font-weight: 500;
+}
+.nav-links { display: flex; gap: 28px; }
+.nav-links a {
+  font-size: 11px;
+  letter-spacing: .1em;
+  color: rgba(245,242,236,.45);
+  text-decoration: none;
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--paper); }
+
+/* ── HERO ── */
+.hero {
+  padding: 100px 40px 80px;
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+}
+.hero-eyebrow {
+  font-size: 10px;
+  letter-spacing: .22em;
+  color: var(--amber);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hero-eyebrow::before {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 1px;
+  background: var(--amber);
+}
+.hero h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(38px, 6vw, 68px);
+  line-height: 1.05;
+  font-weight: 400;
+  margin-bottom: 28px;
+  letter-spacing: -.01em;
+}
+.hero h1 em {
+  font-style: italic;
+  color: var(--amber);
+}
+.hero-lead {
+  font-size: 16px;
+  line-height: 1.8;
+  color: rgba(245,242,236,.7);
+  max-width: 640px;
+  margin-bottom: 44px;
+  font-family: 'DM Mono', monospace;
+  font-weight: 300;
+}
+.hero-cta {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.btn {
+  display: inline-block;
+  padding: 12px 24px;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-decoration: none;
+  border-radius: 2px;
+  transition: all .2s;
+  cursor: pointer;
+  border: none;
+}
+.btn-primary {
+  background: var(--amber);
+  color: var(--ink);
+}
+.btn-primary:hover { background: var(--amber-light); }
+.btn-ghost {
+  background: transparent;
+  color: var(--paper);
+  border: 1px solid rgba(245,242,236,.25);
+}
+.btn-ghost:hover { border-color: var(--paper); }
+
+/* ── DIVIDER ── */
+.rule { border: none; border-top: 1px solid rgba(245,242,236,.08); margin: 0; }
+
+/* ── SECTION WRAPPER ── */
+section { padding: 80px 40px; max-width: 900px; margin: 0 auto; }
+.section-label {
+  font-size: 10px;
+  letter-spacing: .2em;
+  color: var(--amber);
+  margin-bottom: 40px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(245,242,236,.1);
+}
+
+/* ── PROBLEM STATEMENT ── */
+.problem-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  margin-bottom: 48px;
+}
+.prob-cell {
+  background: rgba(245,242,236,.04);
+  padding: 28px;
+  border: 1px solid rgba(245,242,236,.06);
+}
+.prob-cell.accent { background: rgba(200,134,10,.08); border-color: rgba(200,134,10,.2); }
+.prob-cell .label {
+  font-size: 10px;
+  letter-spacing: .14em;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.prob-cell p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(245,242,236,.8);
+}
+.prob-cell.accent p { color: var(--paper); }
+
+/* ── PLAIN ENGLISH EXPLAINER ── */
+.explainer {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(22px, 3.5vw, 32px);
+  line-height: 1.4;
+  font-weight: 400;
+  margin-bottom: 48px;
+  max-width: 780px;
+}
+.explainer em { font-style: italic; color: var(--amber); }
+
+.prose {
+  font-size: 15px;
+  line-height: 1.85;
+  color: rgba(245,242,236,.72);
+  max-width: 680px;
+  margin-bottom: 32px;
+}
+.prose strong { color: var(--paper); font-weight: 500; }
+
+/* ── HOW IT WORKS ── */
+.steps { display: flex; flex-direction: column; gap: 2px; }
+.step {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 0;
+  border: 1px solid rgba(245,242,236,.07);
+  background: rgba(245,242,236,.02);
+  transition: background .2s;
+}
+.step:hover { background: rgba(245,242,236,.05); }
+.step-num {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px 0 0;
+  font-size: 11px;
+  letter-spacing: .1em;
+  color: var(--amber);
+  font-weight: 500;
+}
+.step-body { padding: 24px 28px 24px 0; }
+.step-body h3 {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: .06em;
+  color: var(--paper);
+  margin-bottom: 8px;
+}
+.step-body p {
+  font-size: 13px;
+  color: rgba(245,242,236,.6);
+  line-height: 1.7;
+}
+
+/* ── WHAT IT PRODUCES ── */
+.output-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+.output-card {
+  background: rgba(245,242,236,.03);
+  border: 1px solid rgba(245,242,236,.07);
+  padding: 28px;
+  transition: background .2s;
+}
+.output-card:hover { background: rgba(245,242,236,.06); }
+.output-card .oc-label {
+  font-size: 10px;
+  letter-spacing: .14em;
+  color: var(--teal);
+  margin-bottom: 12px;
+}
+.output-card h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--paper);
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+.output-card p {
+  font-size: 13px;
+  color: rgba(245,242,236,.55);
+  line-height: 1.7;
+}
+
+/* ── LIVE RUN DISPLAY ── */
+.run-box {
+  background: rgba(245,242,236,.02);
+  border: 1px solid rgba(245,242,236,.08);
+  border-left: 3px solid var(--amber);
+  padding: 36px;
+  margin-bottom: 24px;
+}
+.run-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.run-title {
+  font-size: 10px;
+  letter-spacing: .18em;
+  color: var(--amber);
+  font-weight: 500;
+}
+.confidence-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(200,134,10,.15);
+  border: 1px solid rgba(200,134,10,.3);
+  color: var(--amber-light);
+  font-size: 10px;
+  letter-spacing: .12em;
+  border-radius: 1px;
+}
+.run-finding {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(245,242,236,.06);
+  font-size: 13px;
+  color: rgba(245,242,236,.8);
+  line-height: 1.6;
+  display: flex;
+  gap: 12px;
+}
+.run-finding:last-child { border-bottom: none; }
+.run-finding::before {
+  content: '→';
+  color: var(--amber);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ── SIGNAL TABLE ── */
+.sig-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+.sig-table th {
+  font-size: 10px;
+  letter-spacing: .12em;
+  color: var(--muted);
+  text-align: left;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(245,242,236,.1);
+  font-weight: 400;
+}
+.sig-table td {
+  padding: 10px 0;
+  font-size: 12px;
+  color: rgba(245,242,236,.7);
+  border-bottom: 1px solid rgba(245,242,236,.04);
+  vertical-align: top;
+}
+.sig-table td:first-child { color: var(--muted); width: 36px; font-size: 11px; }
+.sig-table td:last-child { text-align: right; }
+.tier { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 1px; letter-spacing: .08em; }
+.tier-mod { background: rgba(200,134,10,.12); color: var(--amber-light); }
+.tier-deg { background: rgba(140,32,32,.15); color: #E07070; }
+
+/* ── ADVERSARY BOX ── */
+.adversary-block {
+  background: rgba(140,32,32,.06);
+  border: 1px solid rgba(140,32,32,.2);
+  border-left: 3px solid var(--red);
+  padding: 28px;
+  margin: 28px 0;
+}
+.adversary-block .adv-label {
+  font-size: 10px;
+  letter-spacing: .18em;
+  color: #C05050;
+  margin-bottom: 14px;
+  font-weight: 500;
+}
+.adversary-block p {
+  font-size: 14px;
+  color: rgba(245,242,236,.82);
+  line-height: 1.75;
+}
+
+/* ── WHY THIS MATTERS ── */
+.distinction-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  margin-bottom: 48px;
+}
+.dist-cell {
+  padding: 28px;
+  border: 1px solid rgba(245,242,236,.06);
+}
+.dist-cell.old {
+  background: rgba(245,242,236,.02);
+  opacity: .7;
+}
+.dist-cell.new { background: rgba(26,122,96,.07); border-color: rgba(26,122,96,.2); }
+.dist-cell .d-label {
+  font-size: 10px;
+  letter-spacing: .14em;
+  margin-bottom: 14px;
+  font-weight: 500;
+}
+.dist-cell.old .d-label { color: var(--muted); }
+.dist-cell.new .d-label { color: var(--teal); }
+.dist-cell ul { list-style: none; }
+.dist-cell ul li {
+  font-size: 13px;
+  color: rgba(245,242,236,.65);
+  line-height: 1.6;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(245,242,236,.05);
+}
+.dist-cell.new ul li { color: rgba(245,242,236,.82); }
+.dist-cell ul li:last-child { border-bottom: none; }
+
+/* ── QUOTE ── */
+.pullquote {
+  padding: 40px;
+  border-top: 1px solid rgba(245,242,236,.08);
+  border-bottom: 1px solid rgba(245,242,236,.08);
+  margin: 40px 0;
+}
+.pullquote p {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(18px, 2.8vw, 26px);
+  font-style: italic;
+  line-height: 1.5;
+  color: rgba(245,242,236,.88);
+  max-width: 680px;
+}
+.pullquote cite {
+  display: block;
+  margin-top: 16px;
+  font-size: 11px;
+  letter-spacing: .12em;
+  color: var(--muted);
+  font-style: normal;
+}
+
+/* ── CTA SECTION ── */
+.cta-section {
+  padding: 80px 40px;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+.cta-section h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 400;
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+.cta-section h2 em { font-style: italic; color: var(--amber); }
+.cta-section p {
+  font-size: 15px;
+  color: rgba(245,242,236,.6);
+  max-width: 520px;
+  margin: 0 auto 40px;
+  line-height: 1.8;
+}
+.cta-links { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid rgba(245,242,236,.06);
+  padding: 32px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.footer-left { font-size: 11px; color: var(--muted); line-height: 1.6; }
+.footer-right { font-size: 10px; letter-spacing: .14em; color: rgba(245,242,236,.25); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero h1 { animation: fadeUp .7s ease both; }
+.hero-lead { animation: fadeUp .7s .12s ease both; }
+.hero-cta { animation: fadeUp .7s .22s ease both; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 680px) {
+  nav { padding: 12px 20px; }
+  .nav-links { display: none; }
+  section { padding: 60px 20px; }
+  .hero { padding: 70px 20px 60px; }
+  .problem-block, .output-grid, .distinction-grid { grid-template-columns: 1fr; }
+  .cta-section { padding: 60px 20px; }
+  footer { padding: 24px 20px; flex-direction: column; }
+  .run-box { padding: 24px 20px; }
+}
+</style>
+</head>
+<body>
+
+<div class="classbar">UNCLASSIFIED // OPEN SOURCE INTELLIGENCE // CIVILIAN SAFE // EPOCH FRAMEWORKS LLC</div>
+
+<nav>
+  <span class="nav-logo">HSSCE · EPOCH FRAMEWORKS</span>
+  <div class="nav-links">
+    <a href="#what">What it is</a>
+    <a href="#how">How it works</a>
+    <a href="#live">Live run</a>
+    <a href="#why">Why it matters</a>
+    <a href="https://emcdo411.github.io/HSSCE-architecture-platform/" target="_blank">Full platform →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">STRATEGIC INTELLIGENCE · EPOCH FRAMEWORKS LLC · McDONALD (2026)</div>
+  <h1>Intelligence that tells you<br><em>what to do next</em> —<br>not just what happened.</h1>
+  <p class="hero-lead">
+    HSSCE is a multi-agent strategic intelligence platform that reads the same open-source signals every analyst reads — and produces something most platforms never deliver: a calibrated, auditable assessment that tells a senior decision-maker exactly what they're facing, how confident to be, and what would change the picture.
+  </p>
+  <div class="hero-cta">
+    <a href="https://emcdo411.github.io/HSSCE-architecture-platform/" target="_blank" class="btn btn-primary">Explore the platform →</a>
+    <a href="#live" class="btn btn-ghost">See a live run</a>
+  </div>
+</div>
+
+<hr class="rule">
+
+<!-- WHAT IT IS -->
+<section id="what">
+  <div class="section-label">WHAT THIS IS</div>
+
+  <p class="explainer">
+    Think of it as a <em>small, disciplined team of analysts</em> — each one an expert in a different domain — who read everything, argue with each other, and only hand you a conclusion when they've agreed on how confident to be in it.
+  </p>
+
+  <p class="prose">
+    Most intelligence briefings give you the conclusion an analyst wanted to reach. HSSCE is built around the opposite problem: <strong>preventing overconfident conclusions from reaching a decision-maker.</strong> Every piece of information that enters the system gets scored for credibility, bias, and freshness before any analyst touches it. Conflicts between sources are logged and surfaced — not papered over. And every conclusion has to come with a reversal condition: the specific evidence that would flip the assessment.
+  </p>
+
+  <p class="prose">
+    That's not how most platforms work. That's not how most briefings work. It is how the best intelligence analysts work — and HSSCE encodes that discipline into the architecture itself, so it can't be bypassed.
+  </p>
+
+  <div class="problem-block">
+    <div class="prob-cell">
+      <div class="label">THE STANDARD PROBLEM</div>
+      <p>A decision-maker gets a summary of what happened, written by someone who already had a conclusion in mind. The confidence level is implicit. The contradicting sources are absent. There's no way to know what would change the picture.</p>
+    </div>
+    <div class="prob-cell accent">
+      <div class="label">WHAT HSSCE DELIVERS INSTEAD</div>
+      <p>A structured assessment: here's what the signals show, here's how credible each signal is, here's what they agree and disagree on, here's how confident you should be, and here's the one thing that would reverse this conclusion.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-label">HOW IT WORKS — NO JARGON</div>
+
+  <p class="explainer">Four steps. Each one is a check on the previous one. <em>Nothing gets through unchallenged.</em></p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-body">
+        <h3>EVERY SOURCE GETS A CREDIBILITY SCORE BEFORE ANYONE READS IT</h3>
+        <p>Before any analysis happens, every source document is scored on four dimensions: how close is this source to the subject matter it's commenting on? What's its track record? Does it have a financial or political interest in a particular outcome? How old is the information? A state propaganda outlet and an independent research institute do not get treated as equals. The system forces that distinction before analysis begins — not as an editorial judgment, but as a mathematical weight.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-body">
+        <h3>CONTRADICTIONS ARE LOGGED, NOT HIDDEN</h3>
+        <p>When two credible sources disagree — on a fact, on an interpretation, or on a conclusion — the system flags it as a conflict and classifies it by severity. A minor factual discrepancy is logged differently from a fundamental disagreement between two high-quality sources on the same question. Those conflicts are carried forward into every output. You see them. You don't get a clean answer that pretended the disagreement didn't exist.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-body">
+        <h3>THE CONFIDENCE LEVEL IS STRUCTURAL, NOT EDITORIAL</h3>
+        <p>The system has four confidence tiers: High, Moderate, Low, and Fragmented. The tier is determined by the weight and agreement of the signals — not by how confident the analyst felt when writing the brief. And critically: the confidence ceiling set in step two cannot be inflated in the final output. If the signals support Moderate confidence, the brief says Moderate. There is no mechanism for converting a weak signal environment into a confident-sounding recommendation.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-body">
+        <h3>EVERY CONCLUSION COMES WITH ITS OWN KILL SWITCH</h3>
+        <p>Every scenario, every pathway, every assessment includes a reversal condition — the specific evidence that would change the conclusion. Not a general caveat. A specific, falsifiable statement: if X happens, this assessment reverses. That's what separates an analytical product from an opinion. Opinions don't tell you what would change them. This platform requires it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- LIVE RUN -->
+<section id="live">
+  <div class="section-label">LIVE PIPELINE RUN — CUBA STRATEGIC ASSESSMENT</div>
+
+  <p class="prose">
+    The following output was produced by a live run of the pipeline against eight open-source documents — State Department policy review, Cuban state media, UN human rights reporting, Pew Research migration data, CSIS geopolitical analysis, ECLAC energy assessment, Oxford Economics modeling, and Brookings sanctions architecture review. No analyst wrote this. The pipeline ran each document through all four steps and produced what follows.
+  </p>
+
+  <div class="run-box">
+    <div class="run-header">
+      <span class="run-title">ANALYTICAL QUERY</span>
+    </div>
+    <p style="font-family:'DM Serif Display',serif;font-size:18px;font-style:italic;color:rgba(245,242,236,.9);line-height:1.5;">
+      "Under what conditions could Cuba become a limited hemispheric stabilization opportunity for the United States?"
+    </p>
+  </div>
+
+  <div class="run-box" style="margin-top:2px;">
+    <div class="run-header">
+      <span class="run-title">SIGNAL MAP — HOW CREDIBLE IS EACH SOURCE?</span>
+      <span class="confidence-badge">8 SOURCES PROCESSED</span>
+    </div>
+    <table class="sig-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>SOURCE</th>
+          <th style="text-align:right">CREDIBILITY SCORE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>S04</td><td>Pew Research — Migration & Public Opinion</td><td><span class="tier tier-mod">3.92 · MODERATE</span></td></tr>
+        <tr><td>S01</td><td>State Dept. Policy Review</td><td><span class="tier tier-mod">3.63 · MODERATE</span></td></tr>
+        <tr><td>S03</td><td>ECLAC Caribbean Energy Report</td><td><span class="tier tier-mod">3.50 · MODERATE</span></td></tr>
+        <tr><td>S08</td><td>Brookings — Sanctions Architecture</td><td><span class="tier tier-mod">3.32 · MODERATE</span></td></tr>
+        <tr><td>S06</td><td>UN Human Rights Special Rapporteur</td><td><span class="tier tier-mod">3.31 · MODERATE</span></td></tr>
+        <tr><td>S05</td><td>CSIS — China/Cuba Strategic Brief</td><td><span class="tier tier-mod">2.89 · MODERATE</span></td></tr>
+        <tr><td>S07</td><td>Oxford Economics — Tourism Modeling</td><td><span class="tier tier-mod">2.69 · MODERATE</span></td></tr>
+        <tr><td>S02</td><td>Granma — Cuban State Media</td><td><span class="tier tier-deg">0.98 · DEGRADED</span></td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:11px;color:var(--muted);margin-top:12px;line-height:1.6;">Note: Cuban state media (Granma) received a near-zero credibility weight due to maximum institutional bias correction. It carries no evidentiary weight. It is logged as an actor posture signal — useful for understanding the Cuban government's negotiating position, not as a factual source.</p>
+  </div>
+
+  <div class="run-box" style="margin-top:2px;border-left-color:var(--amber);">
+    <div class="run-header">
+      <span class="run-title">CONFIDENCE CEILING</span>
+      <span class="confidence-badge">MODERATE — STRUCTURALLY ENFORCED</span>
+    </div>
+    <p style="font-size:14px;color:rgba(245,242,236,.78);line-height:1.75;margin-bottom:16px;">
+      Six of eight sources converge on the same diagnosis: Cuba faces a structural crisis that cannot be resolved through existing support from Venezuela and China. That convergence is real. But two significant interpretive conflicts remain unresolved — on whether human rights benchmarks should precede or follow economic engagement, and on whether Congress would support a bipartisan normalization framework. Until those conflicts are resolved, the ceiling stays at Moderate. The system will not issue a High confidence assessment on a fragmented signal environment.
+    </p>
+  </div>
+
+  <div class="run-box" style="margin-top:2px;">
+    <div class="run-header">
+      <span class="run-title">KEY FINDINGS</span>
+    </div>
+    <div class="run-finding">Cuba's structural energy and fiscal deficit cannot be resolved through Venezuelan oil subsidies or Chinese credit — the gap requires $8–12 billion in external investment over ten years that no current patron can provide.</div>
+    <div class="run-finding">~500,000 Cuban nationals entered the US in a 24-month period after 2021 — migration pressure is now a domestic US fiscal and political issue independent of ideology.</div>
+    <div class="run-finding">Cuban-American political opinion in Florida has shifted: 34% now support conditional engagement, up from 18% in 2019. The political constraint is real but no longer static.</div>
+    <div class="run-finding">The structural barrier to durable engagement is not the Cuban government's posture — it's that any executive-branch opening can be reversed by the next administration, and private capital will not invest at scale into a reversible regulatory environment.</div>
+    <div class="run-finding">China's interest in Cuba is primarily as a signaling asset in great power competition. Any US engagement signal triggers a Chinese countermove designed to prevent Cuba from reducing its dependence on Chinese credit.</div>
+    <div class="run-finding">The Cuban government's declared refusal to negotiate sovereignty is a negotiating posture, not a terminal condition. It should be read as a price, not a wall.</div>
+  </div>
+
+  <div class="adversary-block">
+    <div class="adv-label">ADVERSARY NEXT MOVE — MANDATORY OUTPUT</div>
+    <p>
+      China will use any US engagement signal — or its absence — to consolidate Cuban economic dependence. The adversary's optimal play is to make Chinese patronage more attractive on regime-incentive terms: no political conditions, no human rights benchmarks, no reversibility risk. While the US debates whether engagement is politically viable, China accelerates infrastructure investment and frames any US terms as coercive by comparison. This is not speculative. It is the structurally predictable response of an actor whose primary interest is Cuba as a strategic positioning asset, not as an economic partner. The adversary wins in stasis as much as in conflict.
+    </p>
+  </div>
+
+  <div class="run-box" style="border-left-color:var(--teal);">
+    <div class="run-header">
+      <span class="run-title">RECOMMENDED NEXT MOVE — ONE ACTION, NOT A MENU</span>
+    </div>
+    <p style="font-size:14px;color:rgba(245,242,236,.85);line-height:1.75;">
+      Before any policy signal is sent, commission a targeted intelligence refresh on two specific gaps: (1) the current status of Venezuelan oil delivery volumes and their realistic collapse timeline — this is the forcing function that changes every other calculation; and (2) the precise legal architecture of executive-branch relief authority under existing CACR regulations — what can be done without Congress, and how durable is it to reversal. Those two answers determine whether there is a viable administrative pathway or only a symbolic one.
+    </p>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- WHY IT MATTERS -->
+<section id="why">
+  <div class="section-label">WHY THIS IS DIFFERENT</div>
+
+  <p class="explainer">The problem with most intelligence is not that it's <em>wrong</em>. It's that it doesn't tell you <em>how wrong it could be.</em></p>
+
+  <div class="distinction-grid">
+    <div class="dist-cell old">
+      <div class="d-label">CONVENTIONAL BRIEFING</div>
+      <ul>
+        <li>Conclusion delivered with implicit confidence</li>
+        <li>Contradicting sources omitted or minimized</li>
+        <li>Confidence level reflects analyst's conviction</li>
+        <li>No mechanism for falsification</li>
+        <li>Adversary modeling is speculative and unlabeled</li>
+        <li>One analyst's judgment, one pass</li>
+      </ul>
+    </div>
+    <div class="dist-cell new">
+      <div class="d-label">HSSCE OUTPUT</div>
+      <ul>
+        <li>Confidence tier is structurally enforced — cannot be inflated</li>
+        <li>All source conflicts logged, typed, and surfaced</li>
+        <li>Every source weighted by credibility formula, not editorial preference</li>
+        <li>Every conclusion includes its reversal condition</li>
+        <li>Adversary modeling labeled as behavioral projection, not assessment</li>
+        <li>Four independent analytical layers, each a check on the previous</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="pullquote">
+    <p>"The RAND Corporation is trusted not because it is always right — but because it is always calibrated. The show-stopping moment is not a dramatic prediction. It is when a decision-maker sees a scenario they hadn't considered, with a clear reversal condition, supported by sources they can verify, at a confidence tier they can trust. That is decision superiority."</p>
+    <cite>— HSSCE Architecture Documentation · Epoch Frameworks LLC</cite>
+  </div>
+
+  <p class="prose">
+    This platform was designed for the space between raw intelligence feeds and human analysts — the gap where most organizations currently operate on intuition, anecdote, and whichever analyst got in front of the decision-maker last. HSSCE fills that gap with a system that is transparent about its uncertainty, explicit about its sources, and honest about what it does not know.
+  </p>
+
+  <p class="prose">
+    It is not a prediction engine. It does not tell you what will happen. It tells you <strong>what the signal environment supports believing, at what confidence level, and what evidence would change that belief.</strong> That is a different and more useful product than a prediction — because predictions fail silently, and calibrated assessments fail loudly, with a clear indication of what went wrong.
+  </p>
+</section>
+
+<hr class="rule">
+
+<!-- OUTPUTS -->
+<section>
+  <div class="section-label">WHAT THE PLATFORM PRODUCES</div>
+
+  <div class="output-grid">
+    <div class="output-card">
+      <div class="oc-label">EXECUTIVE OUTPUT</div>
+      <h3>Action Brief</h3>
+      <p>One page. Situation, key signals, scenario pathway, and a single recommended next analytical or operational move. No scroll required. Built for a decision-maker with ten minutes.</p>
+    </div>
+    <div class="output-card">
+      <div class="oc-label">SCENARIO ANALYSIS</div>
+      <h3>Pathway Modeling</h3>
+      <p>Multiple scenario pathways — optimistic, moderate, adversarial, destabilization — each with likelihood ratings, enabling conditions, blocking conditions, and a timeline estimate.</p>
+    </div>
+    <div class="output-card">
+      <div class="oc-label">RISK MAPPING</div>
+      <h3>Escalation Risk Matrix</h3>
+      <p>Structured mapping of escalation risks across seven domains, with severity ratings, trigger conditions, and mitigating factors. Every risk is traceable to specific signal events.</p>
+    </div>
+    <div class="output-card">
+      <div class="oc-label">ADVERSARY MODELING</div>
+      <h3>Next-Move Assessment</h3>
+      <p>Doctrine-anchored behavioral projection of adversary likely moves — labeled as projection, not assessment. Constrained to documented behavioral patterns. Cannot speculate beyond the signal base.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<hr class="rule">
+<div class="cta-section">
+  <h2>Built for the people who<br><em>have to be right</em> about<br>what happens next.</h2>
+  <p>The full architecture, technical stack, domain node specifications, and live agent preview are available on the platform. No login required.</p>
+  <div class="cta-links">
+    <a href="https://emcdo411.github.io/HSSCE-architecture-platform/" target="_blank" class="btn btn-primary">Explore the full platform →</a>
+    <a href="mailto:erwin@epochframeworks.com" class="btn btn-ghost">Start a conversation</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-left">
+    EPOCH FRAMEWORKS LLC · Fort Worth, TX<br>
+    HSSCE v1.0 · Hemispheric Stabilization & Strategic Calibration Engine<br>
+    DACR License v2.7 · McDonald (2026)
+  </div>
+  <div class="footer-right">UNCLASSIFIED // OSINT // CIVILIAN SAFE</div>
+</footer>
+
+</body>
+</html>
