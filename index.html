@@ -476,6 +476,220 @@ footer{
   .section{padding:60px 24px}
   nav{padding:12px 20px}
 }
+
+/* ── AGENT PANEL ── */
+.agent-panel {
+  position: fixed;
+  right: 0; top: 0; bottom: 0;
+  width: 420px;
+  background: rgba(4,7,12,.97);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 990;
+  transform: translateX(100%);
+  transition: transform .35s cubic-bezier(.4,0,.2,1);
+  backdrop-filter: blur(20px);
+}
+.agent-panel.open { transform: translateX(0); }
+
+.agent-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.agent-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  color: var(--cyan);
+}
+.agent-subtitle { font-size: 9px; letter-spacing: .14em; color: var(--ink3); margin-top: 2px; }
+.agent-close {
+  background: none; border: none; color: var(--ink3);
+  cursor: pointer; font-size: 18px; padding: 0 4px;
+  transition: color .2s;
+}
+.agent-close:hover { color: var(--red2); }
+
+.agent-status-bar {
+  padding: 6px 20px;
+  background: rgba(0,200,160,.05);
+  border-bottom: 1px solid rgba(0,200,160,.1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 9px;
+  letter-spacing: .14em;
+  color: var(--cyan);
+  flex-shrink: 0;
+}
+
+.agent-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.agent-messages::-webkit-scrollbar { width: 3px; }
+.agent-messages::-webkit-scrollbar-thumb { background: var(--border2); }
+
+.msg {
+  animation: msgIn .2s ease;
+}
+@keyframes msgIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+.msg-system {
+  background: rgba(0,200,160,.06);
+  border: 1px solid rgba(0,200,160,.15);
+  border-left: 2px solid var(--cyan);
+  padding: 10px 14px;
+}
+.msg-system .msg-label {
+  font-size: 8px; letter-spacing: .18em; color: var(--cyan);
+  text-transform: uppercase; margin-bottom: 6px;
+}
+.msg-system .msg-text {
+  font-size: 12px; color: var(--ink); line-height: 1.65;
+}
+
+.msg-user {
+  background: rgba(232,160,32,.06);
+  border: 1px solid rgba(232,160,32,.15);
+  border-right: 2px solid var(--amber);
+  padding: 10px 14px;
+  align-self: flex-end;
+  max-width: 90%;
+}
+.msg-user .msg-label { font-size: 8px; letter-spacing: .18em; color: var(--amber); margin-bottom: 4px; }
+.msg-user .msg-text { font-size: 12px; color: var(--ink2); line-height: 1.55; }
+
+.msg-conf {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 8px;
+  letter-spacing: .12em;
+  padding: 2px 8px;
+  border: 1px solid;
+  text-transform: uppercase;
+}
+.conf-high { color: var(--cyan); border-color: rgba(0,200,160,.3); }
+.conf-mod { color: var(--amber); border-color: rgba(232,160,32,.3); }
+.conf-low { color: var(--gold); border-color: rgba(200,154,48,.3); }
+.conf-frag { color: var(--red2); border-color: rgba(192,64,64,.3); }
+
+.typing-indicator {
+  display: none;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 14px;
+  background: rgba(0,200,160,.04);
+  border: 1px solid rgba(0,200,160,.1);
+}
+.typing-indicator.show { display: flex; }
+.typing-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--cyan); opacity: .4;
+  animation: tdot 1.2s ease-in-out infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: .2s; }
+.typing-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes tdot { 0%,100%{opacity:.2;transform:scale(.8)} 50%{opacity:1;transform:scale(1)} }
+
+.quick-queries {
+  padding: 10px 16px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.qquery {
+  font-size: 9px;
+  letter-spacing: .08em;
+  padding: 4px 10px;
+  border: 1px solid var(--border2);
+  color: var(--ink3);
+  background: none;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: 'IBM Plex Mono', monospace;
+  white-space: nowrap;
+}
+.qquery:hover { border-color: var(--cyan); color: var(--cyan); }
+
+.agent-input-row {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.agent-input {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  color: var(--ink);
+  padding: 9px 14px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  outline: none;
+  transition: border-color .2s;
+}
+.agent-input:focus { border-color: var(--cyan); }
+.agent-input::placeholder { color: var(--ink3); }
+.agent-send {
+  background: var(--cyan);
+  border: none;
+  color: #000;
+  padding: 9px 16px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: .08em;
+  transition: opacity .2s;
+}
+.agent-send:hover { opacity: .85; }
+.agent-send:disabled { opacity: .4; cursor: not-allowed; }
+
+/* Toggle button */
+.agent-toggle {
+  position: fixed;
+  right: 24px;
+  bottom: 32px;
+  z-index: 991;
+  background: var(--cyan);
+  border: none;
+  color: #000;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  padding: 12px 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 0 24px rgba(0,200,160,.3);
+  transition: all .2s;
+}
+.agent-toggle:hover { background: var(--cyan2); transform: translateY(-2px); }
+.agent-toggle .toggle-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #000;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+@media(max-width:768px) {
+  .agent-panel { width: 100%; }
+  .agent-toggle { right: 16px; bottom: 20px; }
+}
 </style>
 </head>
 <body>
@@ -1150,6 +1364,146 @@ const confObs = new IntersectionObserver(entries => {
 },{threshold:0.3});
 const confSection = document.querySelector('.conf-grid');
 if(confSection) confObs.observe(confSection);
+</script>
+
+<!-- AGENT TOGGLE -->
+<button class="agent-toggle" onclick="toggleAgent()">
+  <div class="toggle-dot"></div>
+  HSSCE AGENT
+</button>
+
+<!-- AGENT PANEL -->
+<div class="agent-panel" id="agentPanel">
+  <div class="agent-header">
+    <div>
+      <div class="agent-title">HSSCE INTELLIGENCE AGENT</div>
+      <div class="agent-subtitle">WCIS v5.2 // NORTH STAR // AICN CALIBRATED // CIVILIAN SAFE</div>
+    </div>
+    <button class="agent-close" onclick="toggleAgent()">✕</button>
+  </div>
+  <div class="agent-status-bar">
+    <div class="status-dot"></div>
+    SYSTEM ONLINE · 12 DOMAIN NODES ACTIVE · AICN GATE NOMINAL
+  </div>
+  <div class="agent-messages" id="agentMessages">
+    <div class="msg msg-system">
+      <div class="msg-label">HSSCE // SYSTEM INIT</div>
+      <div class="msg-text">HEMISPHERIC STABILIZATION & STRATEGIC CALIBRATION ENGINE online. Cuba Theater Module active. WCIS v5.2 decision superiority framework loaded. North Star Intelligence signal corpus seeded.<br/><br/>All outputs are confidence-tiered. Reversal conditions are mandatory. This system does not predict — it calibrates.<br/><br/>Query the system on any domain node, scenario pathway, escalation risk, or strategic constraint.</div>
+      <div class="msg-conf conf-high">SYSTEM // CONFIDENCE: HIGH</div>
+    </div>
+  </div>
+  <div class="typing-indicator" id="typingIndicator">
+    <div class="typing-dot"></div>
+    <div class="typing-dot"></div>
+    <div class="typing-dot"></div>
+    <span style="font-size:9px;letter-spacing:.14em;color:var(--ink3);margin-left:4px;">AICN PROCESSING</span>
+  </div>
+  <div class="quick-queries">
+    <button class="qquery" onclick="sendQuery('Cuba scenario pathways')">Scenario pathways</button>
+    <button class="qquery" onclick="sendQuery('Chinese influence in Cuba')">China influence</button>
+    <button class="qquery" onclick="sendQuery('Escalation risks')">Escalation risks</button>
+    <button class="qquery" onclick="sendQuery('Petroleum node assessment')">Petroleum node</button>
+    <button class="qquery" onclick="sendQuery('Migration pressure analysis')">Migration pressure</button>
+    <button class="qquery" onclick="sendQuery('Sanctions architecture')">Sanctions</button>
+  </div>
+  <div class="agent-input-row">
+    <input class="agent-input" id="agentInput" placeholder="Query the HSSCE agent..." onkeydown="if(event.key==='Enter')sendMessage()"/>
+    <button class="agent-send" id="agentSend" onclick="sendMessage()">SEND</button>
+  </div>
+</div>
+
+<script>
+function toggleAgent() {
+  document.getElementById('agentPanel').classList.toggle('open');
+}
+
+const RESPONSES = {
+  scenario: {
+    text: `SCENARIO PATHWAY ANALYSIS — CUBA THEATER\n\n9 pathways modeled across current signal corpus:\n\n[1] ECONOMIC NORMALIZATION (Conf: MODERATE)\nGradual US sanctions relief triggers FDI inflow. Tourism GDP recovery drives domestic pressure for institutional reform. Timeline: 4–8 years. Reversal condition: US Congress blocks OFAC amendments.\n\n[2] CHINESE INFLUENCE EXPANSION (Conf: HIGH)\nUS inaction creates vacuum. PRC accelerates BRI Caribbean extension via port infrastructure investment at Mariel. Strategic deterrence implications: significant. Reversal condition: Cuban government restricts military-adjacent PRC access.\n\n[3] US-CUBA PARTIAL THAW (Conf: MODERATE)\nExecutive-level diplomatic channel opens. No full normalization. Limited academic and commercial exchange. Sanctions architecture unchanged. Reversal condition: Cuban domestic repression event triggers US congressional action.\n\n[4] DESTABILIZATION TRAJECTORY (Conf: MODERATE)\nEconomic deterioration accelerates migration pressure on US southern border. Remittance restrictions fail to produce political leverage. Social unrest increases. Reversal condition: Venezuelan energy subsidy restored.\n\n[5] STRATEGIC REALIGNMENT (Conf: LOW)\nCuban government negotiates distance from Russian military advisory presence in exchange for partial US sanctions relief. Conditions: extremely constrained. Reversal condition: Russian leverage over Cuban debt structure.`,
+    conf: 'mod',
+    tier: 'CONFIDENCE: MODERATE — Multiple contradictions unresolved across political viability and PRC intent nodes'
+  },
+  china: {
+    text: `DOMAIN NODE H — CHINESE & RUSSIAN INFLUENCE MAPPING\n\nPRC HEMISPHERIC POSTURE (Conf: MODERATE)\n\nSignal convergence across maritime data, infrastructure investment records, and BRI documentation indicates active PRC infrastructure engagement in Cuba. Mariel Special Economic Zone has received documented PRC investment interest. Port infrastructure access has dual-use military implications per WCIS v5.2 battlespace awareness protocol.\n\nBEHAVIORAL PROJECTION (doctrine-anchored):\nPRC BRI doctrine (2015, updated 2023) prioritizes port access, logistics infrastructure, and telecommunications in strategic maritime corridors. Caribbean represents a Western Hemisphere adjacency to the Panama Canal — consistent with documented BRI expansion priorities.\n\nRUSSIAN POSTURE (Conf: FRAGMENTED):\nSignal environment too sparse and contradictory to support HIGH or MODERATE confidence assessment of current Russian military advisory presence. Historical precedent (Soviet-era bases) is not a valid doctrine anchor for current behavioral projection.\n\nReversal condition: Cuban government formally restricts PRC port access under bilateral agreement terms.\n\nAICN FLAG: This node carries a PRC intent uncertainty discount. Behavioral projection ≠ intelligence assessment.`,
+    conf: 'mod',
+    tier: 'CONFIDENCE: MODERATE — PRC infrastructure signals HIGH, Russian posture FRAGMENTED — synthesis downgraded'
+  },
+  escalation: {
+    text: `ESCALATION RISK MAP — CUBA THEATER\n\n7 ESCALATION DOMAINS ASSESSED:\n\n[MILITARY] MODERATE — Cuban military capability remains limited. Risk vector is not direct military action but basing access by third-party adversaries (PRC, Russia). WCIS v5.2 battlespace awareness flags Guantanamo Bay proximity as a standing deterrence constraint.\n\n[ECONOMIC] HIGH — Venezuelan energy subsidy fragility creates near-term economic shock risk. If subsidy collapses, Cuban economic deterioration accelerates across all other escalation domains.\n\n[MIGRATION] HIGH — Signal convergence across migration pressure node and DHS operational data. Cuban migration to US is at historically elevated levels. Economic destabilization trajectory amplifies this risk by 2–3x.\n\n[SANCTIONS] MODERATE — US sanctions architecture is entrenched but not irreversible. Domestic US political constraints (Node K: FRAGMENTED confidence) are the binding constraint on sanctions modification.\n\n[DIPLOMATIC] LOW-MODERATE — No active diplomatic channel. Track-two engagement exists but below threshold of strategic significance.\n\n[CYBER] LOW — No elevated threat signal from current OSINT corpus for Cuba-specific cyber escalation.\n\n[ENERGY] HIGH — Venezuelan subsidy dependency creates systemic vulnerability across all scenario pathways.\n\nReversal condition for HIGH-tier risks: Venezuelan government stabilization OR alternative energy partnership established.`,
+    conf: 'mod',
+    tier: 'CONFIDENCE: MODERATE — Economic and Migration nodes HIGH confidence. Military node FRAGMENTED on third-party basing.'
+  },
+  petroleum: {
+    text: `DOMAIN NODE A — PETROLEUM & REFINERY ECONOMICS\n\nCUBA ENERGY ARCHITECTURE (Conf: HIGH)\n\nCuba imports approximately 65,000–70,000 barrels per day from Venezuela under preferential terms negotiated under the Bolivarian Alliance framework. This subsidy represents the single most significant structural vulnerability in the Cuban economic system.\n\nSIGNAL CONVERGENCE (3 independent source types):\n— Venezuelan production data shows Maduro-era PDVSA output at 30–40% of pre-Chavez capacity\n— IEA and EIA tracking shows continued Cuba import dependency with no domestic production increase\n— Caribbean maritime shipping data confirms elevated Venezuela-Cuba tanker traffic with periods of disruption\n\nNORMALIZATION SCENARIO MODELING:\nIf US sanctions were modified to allow energy sector engagement, Cuba's refinery capacity (Cienfuegos, Hermanos Díaz) could attract US technical investment within 18–24 months. Revenue potential to Cuban government: estimated $400M–$800M annually in a partial normalization scenario.\n\nSecond-order effect: US energy sector normalization with Cuba would directly displace PRC energy advisory presence — highest-leverage single intervention in the Chinese influence displacement scenario.\n\nReversal condition: Venezuelan production collapse triggers emergency PRC energy bridge agreement.`,
+    conf: 'high',
+    tier: 'CONFIDENCE: HIGH — Three independent corroborating signal types. Strong doctrine anchoring via IEA data.'
+  },
+  migration: {
+    text: `DOMAIN NODE F — MIGRATION PRESSURE MODELING\n\nCURRENT ASSESSMENT (Conf: HIGH)\n\nCuban migration to the United States reached historically unprecedented levels in FY2022-2024, with CBP encounters exceeding 300,000 across the period — surpassing any prior migration wave including the Mariel boatlift.\n\nDRIVER DECOMPOSITION (AICN calibrated):\n— PRIMARY: Economic deterioration (energy subsidy fragility + COVID tourism collapse + US remittance restrictions)\n— SECONDARY: Civic repression following July 2021 protests\n— TERTIARY: Social network effects — diaspora expansion creates migration infrastructure\n\nSCENARIO PATHWAY INTERSECTION:\nMigration pressure is the highest-leverage domestic US political variable in this theater. It directly constrains or enables Node K (Domestic US Political Viability). High migration levels simultaneously create pressure for engagement (border management) and pressure against engagement (political optics).\n\nThis contradiction is unresolved in the current signal corpus — AICN has flagged it as a structural paradox that affects confidence in any scenario pathway that depends on US domestic political action.\n\nReversal condition: Cuban economic stabilization — requires either Venezuelan subsidy restoration or alternative energy and tourism revenue stream activation.`,
+    conf: 'high',
+    tier: 'CONFIDENCE: HIGH on migration data. FRAGMENTED on political viability intersection. Node carries structural paradox flag.'
+  },
+  sanctions: {
+    text: `DOMAIN NODE J — SANCTIONS & ECONOMIC PRESSURE ARCHITECTURE\n\nCURRENT SANCTIONS ARCHITECTURE (Conf: HIGH)\n\nThe US Cuba sanctions regime is a layered structure: OFAC-administered embargo under the Cuban Assets Control Regulations (CACR), Helms-Burton Act Title III (codifying embargo into statute — hardest layer to unwind), and executive-level restrictions on remittances, travel, and financial transactions.\n\nHELMS-BURTON CONSTRAINT:\nThe codification of the embargo in statute (1996) means full normalization requires Congressional action, not just executive order. This is the binding constraint in all normalization scenario pathways. No executive administration can fully normalize without Congressional action. Confidence ceiling on full normalization scenarios: LOW regardless of diplomatic signals.\n\nPARTIAL THAW PATHWAYS (executive authority only):\n— Remittance restriction reversal (Obama-era precedent)\n— Travel authorization expansion\n— Specific sector carve-outs (agriculture, medicine) under existing humanitarian exemptions\n— Banking access for licensed transactions\n\nThese partial measures do not require Congressional action and have bipartisan precedent.\n\nSECOND-ORDER EFFECT: Partial thaw without full normalization creates asymmetric benefit — US companies access limited market while Cuban government captures hard currency with no structural reform pressure.\n\nReversal condition: Helms-Burton Title III litigation wave triggered by US corporate actors blocks executive carve-outs.`,
+    conf: 'high',
+    tier: 'CONFIDENCE: HIGH on legal architecture. FRAGMENTED on political viability of Congressional action.'
+  },
+  default: {
+    text: `AICN CALIBRATION RESPONSE\n\nQuery received. Signal corpus search initiated across 12 domain nodes and active scenario pathways.\n\nCURRENT THEATER STATUS — CUBA:\n— 9 scenario pathways active\n— Economic escalation domain: HIGH risk\n— Migration pressure node: HIGH confidence, elevated\n— Chinese influence node: MODERATE confidence, active monitoring\n— Political viability node: FRAGMENTED — insufficient signal convergence\n— Venezuelan energy subsidy: Critical structural vulnerability across all pathways\n\nThis system produces calibrated assessments, not predictions. Every output carries a confidence ceiling and a reversal condition.\n\nFor deeper analysis, query a specific domain node (A through L), a specific scenario pathway, or an escalation risk domain. The system will retrieve the highest-confidence signals available in the current corpus and surface any unresolved contradictions before generating output.\n\nWhat domain requires decision superiority today?`,
+    conf: 'mod',
+    tier: 'CONFIDENCE: MODERATE — General assessment. Query a specific node or pathway for higher-fidelity output.'
+  }
+};
+
+function getResponse(query) {
+  const q = query.toLowerCase();
+  if(q.includes('scenario') || q.includes('pathway') || q.includes('paths')) return RESPONSES.scenario;
+  if(q.includes('china') || q.includes('chinese') || q.includes('prc') || q.includes('russia') || q.includes('russian') || q.includes('influence')) return RESPONSES.china;
+  if(q.includes('escalat') || q.includes('risk') || q.includes('threat')) return RESPONSES.escalation;
+  if(q.includes('petrol') || q.includes('oil') || q.includes('energy') || q.includes('refin')) return RESPONSES.petroleum;
+  if(q.includes('migrat') || q.includes('border') || q.includes('refugee') || q.includes('asylum')) return RESPONSES.migration;
+  if(q.includes('sanction') || q.includes('embargo') || q.includes('ofac') || q.includes('helms')) return RESPONSES.sanctions;
+  return RESPONSES.default;
+}
+
+function addMessage(type, text, confClass, confLabel) {
+  const msgs = document.getElementById('agentMessages');
+  const div = document.createElement('div');
+  div.className = 'msg msg-' + type;
+  const label = type === 'system' ? 'HSSCE // AICN OUTPUT' : 'ANALYST QUERY';
+  div.innerHTML = '<div class="msg-label">' + label + '</div><div class="msg-text" style="white-space:pre-wrap">' + text + '</div>' +
+    (confClass ? '<div class="msg-conf ' + confClass + '">' + confLabel + '</div>' : '');
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function sendQuery(q) {
+  document.getElementById('agentInput').value = q;
+  sendMessage();
+}
+
+async function sendMessage() {
+  const input = document.getElementById('agentInput');
+  const send = document.getElementById('agentSend');
+  const query = input.value.trim();
+  if(!query) return;
+  input.value = '';
+  send.disabled = true;
+
+  addMessage('user', query, null, null);
+
+  const typing = document.getElementById('typingIndicator');
+  typing.classList.add('show');
+  document.getElementById('agentMessages').scrollTop = 9999;
+
+  await new Promise(r => setTimeout(r, 1200 + Math.random() * 800));
+
+  typing.classList.remove('show');
+  const resp = getResponse(query);
+  addMessage('system', resp.text, 'conf-' + resp.conf, resp.tier);
+  send.disabled = false;
+  input.focus();
+}
 </script>
 </body>
 </html>
