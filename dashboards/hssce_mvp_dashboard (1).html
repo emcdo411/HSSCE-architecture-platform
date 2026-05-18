@@ -1,0 +1,554 @@
+
+<h2 class="sr-only">HSSCE MVP — Hemispheric Stabilization & Strategic Calibration Engine interactive dashboard preview</h2>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+
+.shell {
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  background: var(--color-background-primary);
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+  background: var(--color-background-secondary);
+}
+.topbar-dot { width: 10px; height: 10px; border-radius: 50%; }
+.d1 { background: #E24B4A; } .d2 { background: #EF9F27; } .d3 { background: #639922; }
+.topbar-title { font-size: 12px; color: var(--color-text-secondary); margin: 0 auto; letter-spacing: 0.05em; }
+
+.badge {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+}
+.badge-teal { background: #E1F5EE; color: #0F6E56; }
+.badge-amber { background: #FAEEDA; color: #854F0B; }
+.badge-red { background: #FCEBEB; color: #A32D2D; }
+.badge-blue { background: #E6F1FB; color: #185FA5; }
+.badge-gray { background: #F1EFE8; color: #5F5E5A; }
+
+.sidebar {
+  width: 200px;
+  border-right: 0.5px solid var(--color-border-tertiary);
+  background: var(--color-background-secondary);
+  flex-shrink: 0;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+}
+.nav-item:hover { background: var(--color-background-primary); color: var(--color-text-primary); }
+.nav-item.active {
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+  border-left-color: #185FA5;
+  font-weight: 500;
+}
+.nav-item i { font-size: 15px; }
+
+.main { display: flex; height: 540px; }
+.content { flex: 1; overflow-y: auto; padding: 20px; }
+
+.section { display: none; }
+.section.active { display: block; }
+
+.row { display: flex; gap: 12px; margin-bottom: 16px; }
+
+.metric {
+  flex: 1;
+  background: var(--color-background-secondary);
+  border-radius: var(--border-radius-md);
+  padding: 12px 14px;
+}
+.metric-label { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 4px; letter-spacing: 0.04em; }
+.metric-val { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
+.metric-sub { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+
+.card {
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  padding: 16px;
+  margin-bottom: 14px;
+}
+.card-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
+.pipeline {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 16px;
+}
+.pipe-node {
+  flex: 1;
+  text-align: center;
+  padding: 10px 6px;
+  border-radius: var(--border-radius-md);
+  position: relative;
+}
+.pipe-node.done { background: #E1F5EE; }
+.pipe-node.active-node { background: #E6F1FB; }
+.pipe-node.pending { background: var(--color-background-secondary); }
+.pipe-label { font-size: 11px; font-weight: 500; }
+.pipe-label.done-text { color: #0F6E56; }
+.pipe-label.active-text { color: #185FA5; }
+.pipe-label.pending-text { color: var(--color-text-secondary); }
+.pipe-sub { font-size: 10px; margin-top: 2px; }
+.pipe-sub.done-text { color: #0F6E56; }
+.pipe-sub.active-text { color: #185FA5; }
+.pipe-sub.pending-text { color: var(--color-text-tertiary); }
+.pipe-arrow {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+
+.signal-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+  font-size: 12px;
+}
+.signal-row:last-child { border-bottom: none; }
+.signal-source { flex: 1; color: var(--color-text-primary); font-weight: 500; }
+.signal-region { width: 80px; color: var(--color-text-secondary); }
+.signal-weight {
+  width: 52px;
+  text-align: right;
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.bar-label { font-size: 12px; color: var(--color-text-secondary); width: 140px; flex-shrink: 0; }
+.bar-track {
+  flex: 1;
+  height: 6px;
+  background: var(--color-background-secondary);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.bar-fill { height: 100%; border-radius: 3px; transition: width 0.8s ease; }
+.bar-val { font-size: 12px; font-weight: 500; width: 36px; text-align: right; }
+
+.scenario-item {
+  padding: 10px 12px;
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md);
+  margin-bottom: 8px;
+}
+.scenario-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.scenario-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+.scenario-desc { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.finding-item {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+}
+.finding-item:last-child { border-bottom: none; }
+.finding-num { color: var(--color-text-secondary); flex-shrink: 0; width: 18px; }
+
+.reversal-item {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 6px 0;
+  font-size: 12px;
+  color: var(--color-text-primary);
+  line-height: 1.5;
+}
+.reversal-icon { color: #BA7517; flex-shrink: 0; font-size: 14px; }
+
+.ceiling-display {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #E6F1FB;
+  border-radius: var(--border-radius-md);
+  margin-bottom: 14px;
+}
+.ceiling-tier { font-size: 22px; font-weight: 500; color: #185FA5; }
+.ceiling-text { font-size: 12px; color: #185FA5; line-height: 1.5; }
+
+.escalation-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+  font-size: 12px;
+}
+.escalation-item:last-child { border-bottom: none; }
+.esc-sev { width: 60px; flex-shrink: 0; }
+.esc-text { flex: 1; color: var(--color-text-primary); line-height: 1.5; }
+
+.endpoint-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+  font-size: 12px;
+}
+.endpoint-row:last-child { border-bottom: none; }
+.ep-method { width: 38px; font-weight: 500; }
+.ep-path { font-family: var(--font-mono); flex: 1; color: var(--color-text-primary); }
+.ep-desc { color: var(--color-text-secondary); width: 160px; text-align: right; }
+
+.run-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+  font-size: 12px;
+}
+.run-row:last-child { border-bottom: none; }
+.run-id { font-family: var(--font-mono); color: var(--color-text-secondary); width: 72px; }
+.run-query { flex: 1; color: var(--color-text-primary); }
+.run-ceiling { width: 80px; text-align: right; }
+
+.next-move {
+  padding: 12px 14px;
+  background: var(--color-background-secondary);
+  border-left: 3px solid #185FA5;
+  border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+  font-size: 13px;
+  color: var(--color-text-primary);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+</style>
+
+<div class="shell">
+  <div class="topbar">
+    <div class="topbar-dot d1"></div>
+    <div class="topbar-dot d2"></div>
+    <div class="topbar-dot d3"></div>
+    <span class="topbar-title">HSSCE MVP — localhost:8000</span>
+    <span class="badge badge-teal">operational</span>
+  </div>
+
+  <div class="main">
+    <div class="sidebar">
+      <div style="padding: 14px 16px 8px; font-size: 10px; color: var(--color-text-secondary); letter-spacing: 0.06em;">NAVIGATION</div>
+      <div class="nav-item active" onclick="showSection('overview',this)"><i class="ti ti-layout-dashboard" aria-hidden="true"></i> Overview</div>
+      <div class="nav-item" onclick="showSection('signals',this)"><i class="ti ti-broadcast" aria-hidden="true"></i> Signal map</div>
+      <div class="nav-item" onclick="showSection('aicn',this)"><i class="ti ti-adjustments" aria-hidden="true"></i> AICN calibration</div>
+      <div class="nav-item" onclick="showSection('brief',this)"><i class="ti ti-file-description" aria-hidden="true"></i> Executive brief</div>
+      <div class="nav-item" onclick="showSection('api',this)"><i class="ti ti-api" aria-hidden="true"></i> API endpoints</div>
+      <div class="nav-item" onclick="showSection('runs',this)"><i class="ti ti-history" aria-hidden="true"></i> Run history</div>
+
+      <div style="margin-top: auto; padding: 16px; border-top: 0.5px solid var(--color-border-tertiary); margin-top: 16px;">
+        <div style="font-size: 10px; color: var(--color-text-secondary); letter-spacing: 0.04em; margin-bottom: 6px;">SYSTEM</div>
+        <div style="font-size: 11px; color: var(--color-text-secondary);">WCIS v5.2</div>
+        <div style="font-size: 11px; color: var(--color-text-secondary);">AICN active</div>
+        <div style="font-size: 11px; color: var(--color-text-secondary);">Claude Sonnet 4</div>
+        <div style="font-size: 11px; color: var(--color-text-secondary); margin-top: 6px;">DACR v2.7</div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- OVERVIEW -->
+      <div class="section active" id="sec-overview">
+        <div class="row">
+          <div class="metric"><div class="metric-label">SIGNALS INGESTED</div><div class="metric-val">8</div><div class="metric-sub">Cuba sample run</div></div>
+          <div class="metric"><div class="metric-label">CONFIDENCE CEILING</div><div class="metric-val" style="color:#185FA5;">MODERATE</div><div class="metric-sub">AICN enforced</div></div>
+          <div class="metric"><div class="metric-label">CONFLICTS DETECTED</div><div class="metric-val" style="color:#A32D2D;">2</div><div class="metric-sub">1 significant, 1 minor</div></div>
+          <div class="metric"><div class="metric-label">SCENARIOS</div><div class="metric-val">4</div><div class="metric-sub">Pathways modeled</div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">PIPELINE STATUS — LAST RUN</div>
+          <div class="pipeline">
+            <div class="pipe-node done">
+              <div class="pipe-label done-text">Signal</div>
+              <div class="pipe-sub done-text">8 records</div>
+            </div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-node done">
+              <div class="pipe-label done-text">AICN</div>
+              <div class="pipe-sub done-text">calibrated</div>
+            </div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-node done">
+              <div class="pipe-label done-text">Synthesis</div>
+              <div class="pipe-sub done-text">4 pathways</div>
+            </div>
+            <div class="pipe-arrow">→</div>
+            <div class="pipe-node done">
+              <div class="pipe-label done-text">Brief</div>
+              <div class="pipe-sub done-text">delivered</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">ACTIVE QUERY</div>
+          <div style="font-size: 13px; color: var(--color-text-primary); line-height: 1.6;">
+            Under what realistic geopolitical, economic, and strategic conditions could Cuba transition from adversarial liability to hemispheric stabilization opportunity for the United States while reducing escalation risk and improving regional resilience?
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">ADVERSARY NEXT MOVE</div>
+          <div style="font-size: 13px; color: var(--color-text-primary); line-height: 1.6; border-left: 3px solid #E24B4A; padding-left: 12px;">
+            China will deepen credit dependency to prevent normalization that reduces Cuban strategic utility as a pressure vector against US hemispheric posture. Russia will sustain aviation fuel deliveries at minimum cost to preserve alliance optics.
+          </div>
+        </div>
+      </div>
+
+      <!-- SIGNALS -->
+      <div class="section" id="sec-signals">
+        <div class="card">
+          <div class="card-title">SIGNAL REGISTRY — 8 SOURCES</div>
+          <div class="signal-row" style="font-size: 11px; color: var(--color-text-secondary); padding-bottom: 6px;">
+            <div class="signal-source">Source</div>
+            <div class="signal-region">Region</div>
+            <div style="width:80px; text-align:right; font-size:11px; color: var(--color-text-secondary);">Type</div>
+            <div class="signal-weight">Weight</div>
+          </div>
+          <div class="signal-row"><div class="signal-source">State Dept Cuba Policy Review</div><div class="signal-region">US</div><div style="width:80px; text-align:right"><span class="badge badge-blue">policy</span></div><div class="signal-weight" style="color:#0F6E56;">3.42</div></div>
+          <div class="signal-row"><div class="signal-source">Granma — Revolutionary Council</div><div class="signal-region">Cuba</div><div style="width:80px; text-align:right"><span class="badge badge-red">state media</span></div><div class="signal-weight" style="color:#A32D2D;">1.28</div></div>
+          <div class="signal-row"><div class="signal-source">ECLAC Regional Energy Report</div><div class="signal-region">LATAM</div><div style="width:80px; text-align:right"><span class="badge badge-teal">ngo</span></div><div class="signal-weight" style="color:#0F6E56;">3.61</div></div>
+          <div class="signal-row"><div class="signal-source">Pew Migration Patterns Study</div><div class="signal-region">US</div><div style="width:80px; text-align:right"><span class="badge badge-blue">academic</span></div><div class="signal-weight" style="color:#0F6E56;">3.55</div></div>
+          <div class="signal-row"><div class="signal-source">CSIS China Caribbean Brief</div><div class="signal-region">China</div><div style="width:80px; text-align:right"><span class="badge badge-gray">think tank</span></div><div class="signal-weight" style="color:#185FA5;">3.12</div></div>
+          <div class="signal-row"><div class="signal-source">UN Human Rights Rapporteur</div><div class="signal-region">LATAM</div><div style="width:80px; text-align:right"><span class="badge badge-teal">ngo</span></div><div class="signal-weight" style="color:#185FA5;">3.04</div></div>
+          <div class="signal-row"><div class="signal-source">Oxford Economics Tourism Model</div><div class="signal-region">Cuba</div><div style="width:80px; text-align:right"><span class="badge badge-amber">market</span></div><div class="signal-weight" style="color:#185FA5;">2.88</div></div>
+          <div class="signal-row"><div class="signal-source">Brookings Sanctions Architecture</div><div class="signal-region">US</div><div style="width:80px; text-align:right"><span class="badge badge-gray">think tank</span></div><div class="signal-weight" style="color:#0F6E56;">3.38</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">CONFLICT REGISTER</div>
+          <div style="padding: 8px 0; border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 12px;">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;"><span class="badge badge-red">SIGNIFICANT — INTERPRETIVE</span></div>
+            <div style="color: var(--color-text-primary); line-height:1.5;">Granma narrative (external victimization as driver) conflicts with ECLAC structural analysis (energy infrastructure failure as primary cause). Resolution: ECLAC carries higher adjusted weight; Granma flagged as incentive-biased.</div>
+          </div>
+          <div style="padding: 8px 0; font-size: 12px;">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;"><span class="badge badge-amber">MINOR — INTERPRETIVE</span></div>
+            <div style="color: var(--color-text-primary); line-height:1.5;">Oxford Economics tourism recovery model assumes governance reform; Brookings sanctions brief projects GAESA capture risk regardless of reform. Unresolved — noted as residual uncertainty.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AICN -->
+      <div class="section" id="sec-aicn">
+        <div class="card">
+          <div class="card-title">CONFIDENCE CEILING</div>
+          <div class="ceiling-display">
+            <div class="ceiling-tier">MODERATE</div>
+            <div class="ceiling-text">Convergence present across 6 of 8 signals on economic crisis as primary driver. Two unresolved conflicts prevent HIGH ceiling. Chinese-Russian blocking dynamic adds residual uncertainty not addressable from open-source signals alone.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">AICN SCORING — ADJUSTED WEIGHTS</div>
+          <div class="bar-row"><div class="bar-label">ECLAC Energy Report</div><div class="bar-track"><div class="bar-fill" style="width:72%; background:#1D9E75;"></div></div><div class="bar-val" style="color:#0F6E56;">3.61</div></div>
+          <div class="bar-row"><div class="bar-label">Pew Migration Study</div><div class="bar-track"><div class="bar-fill" style="width:71%; background:#1D9E75;"></div></div><div class="bar-val" style="color:#0F6E56;">3.55</div></div>
+          <div class="bar-row"><div class="bar-label">State Dept Review</div><div class="bar-track"><div class="bar-fill" style="width:68%; background:#1D9E75;"></div></div><div class="bar-val" style="color:#0F6E56;">3.42</div></div>
+          <div class="bar-row"><div class="bar-label">Brookings Sanctions</div><div class="bar-track"><div class="bar-fill" style="width:68%; background:#1D9E75;"></div></div><div class="bar-val" style="color:#0F6E56;">3.38</div></div>
+          <div class="bar-row"><div class="bar-label">CSIS China Brief</div><div class="bar-track"><div class="bar-fill" style="width:62%; background:#378ADD;"></div></div><div class="bar-val" style="color:#185FA5;">3.12</div></div>
+          <div class="bar-row"><div class="bar-label">UN Rapporteur</div><div class="bar-track"><div class="bar-fill" style="width:61%; background:#378ADD;"></div></div><div class="bar-val" style="color:#185FA5;">3.04</div></div>
+          <div class="bar-row"><div class="bar-label">Oxford Tourism Model</div><div class="bar-track"><div class="bar-fill" style="width:58%; background:#378ADD;"></div></div><div class="bar-val" style="color:#185FA5;">2.88</div></div>
+          <div class="bar-row"><div class="bar-label">Granma (state media)</div><div class="bar-track"><div class="bar-fill" style="width:26%; background:#E24B4A;"></div></div><div class="bar-val" style="color:#A32D2D;">1.28</div></div>
+          <div style="display:flex; gap:12px; margin-top:12px;">
+            <span style="font-size:11px; display:flex; align-items:center; gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#1D9E75;display:inline-block;"></span> MODERATE</span>
+            <span style="font-size:11px; display:flex; align-items:center; gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#378ADD;display:inline-block;"></span> MODERATE-LOW</span>
+            <span style="font-size:11px; display:flex; align-items:center; gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#E24B4A;display:inline-block;"></span> LOW (biased)</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">RESIDUAL UNCERTAINTY</div>
+          <div style="font-size:12px; color: var(--color-text-secondary); line-height:1.6;">
+            <div style="padding: 4px 0;">1. Cuban government internal decision calculus is opaque to open-source signals.</div>
+            <div style="padding: 4px 0;">2. Chinese credit facility terms and conditionality are not publicly disclosed.</div>
+            <div style="padding: 4px 0;">3. Whether GAESA would capture normalization benefits or allow broader economic opening is unresolvable from current signals.</div>
+            <div style="padding: 4px 0;">4. US congressional vote math on statutory reform is not assessable within this analytical cycle.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BRIEF -->
+      <div class="section" id="sec-brief">
+        <div class="card">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px;">
+            <div class="card-title" style="margin-bottom:0;">EXECUTIVE BRIEF</div>
+            <span class="badge badge-gray">OPEN SOURCE — UNCLASSIFIED</span>
+          </div>
+          <div style="font-size:13px; font-weight:500; color: var(--color-text-primary); margin-bottom:10px;">Cuba Strategic Stabilization Assessment — WCIS v5.2 / AICN Calibrated</div>
+          <div style="font-size:12px; color: var(--color-text-secondary); line-height:1.7;">
+            Cuba faces a structural economic crisis driven primarily by energy infrastructure collapse, Venezuelan subsidy decline, and accumulated sanctions pressure. The humanitarian dimension — persistent food insecurity, pharmaceutical shortages, and record outmigration — is now materially affecting US domestic policy costs in Florida and at the southern border. The signal base converges on MODERATE confidence that conditions for calibrated engagement exist but that structural blocking dynamics — primarily Chinese credit dependency and Cuban government opacity — prevent HIGH confidence in any normalization pathway.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">KEY FINDINGS</div>
+          <div class="finding-item"><div class="finding-num">1.</div><div>The primary driver of Cuban instability is infrastructure failure, not political resistance — a distinction that opens humanitarian-framed engagement lanes not available in purely political frameworks.</div></div>
+          <div class="finding-item"><div class="finding-num">2.</div><div>Record outmigration represents a measurable US domestic policy cost of the status quo that is largely absent from the current policy cost-benefit calculus.</div></div>
+          <div class="finding-item"><div class="finding-num">3.</div><div>Executive branch retains authority for phased administrative action without congressional involvement — sanctions expansion of licensed categories does not require legislative change.</div></div>
+          <div class="finding-item"><div class="finding-num">4.</div><div>Chinese and Russian structural interests in maintaining Cuban adversarial utility create a significant blocking condition that any normalization pathway must account for.</div></div>
+          <div class="finding-item"><div class="finding-num">5.</div><div>GAESA capture risk means tourism and investment normalization without governance benchmarks would primarily benefit military-affiliated commercial entities, not the Cuban population.</div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">SCENARIO PATHWAYS</div>
+          <div class="scenario-item">
+            <div class="scenario-header"><div class="scenario-name">Phased administrative normalization</div><span class="badge badge-blue">MODERATE</span></div>
+            <div class="scenario-desc">Executive branch expands licensed categories for humanitarian goods, remittances, and telecommunications without congressional action. Cuba signals acceptance of humanitarian benchmarks. 18-36 month horizon.</div>
+          </div>
+          <div class="scenario-item">
+            <div class="scenario-header"><div class="scenario-name">Chinese influence expansion</div><span class="badge badge-amber">HIGH</span></div>
+            <div class="scenario-desc">US policy stasis continues. China deepens credit dependency and infrastructure investment, consolidating Cuba as strategic pressure asset against US hemispheric posture.</div>
+          </div>
+          <div class="scenario-item">
+            <div class="scenario-header"><div class="scenario-name">Destabilization cascade</div><span class="badge badge-red">MODERATE</span></div>
+            <div class="scenario-desc">Energy grid further deteriorates. Migration surge exceeds regional absorption capacity. Cuban government responds with increased repression. Regional instability pressures Caribbean basin states.</div>
+          </div>
+          <div class="scenario-item">
+            <div class="scenario-header"><div class="scenario-name">Partial diplomatic thaw</div><span class="badge badge-gray">LOW</span></div>
+            <div class="scenario-desc">Back-channel negotiations produce limited SSOT designation review. Trade in humanitarian goods expands modestly. Political conditions remain unchanged. Requires Cuban government to signal reciprocity.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">ESCALATION RISK MATRIX</div>
+          <div class="escalation-item"><div class="esc-sev"><span class="badge badge-red">HIGH</span></div><div class="esc-text">Migration surge — continued energy grid collapse drives outmigration spike exceeding Florida and border management capacity. Trigger: additional blackout duration increase beyond current 12-20 hour baseline.</div></div>
+          <div class="escalation-item"><div class="esc-sev"><span class="badge badge-amber">MOD</span></div><div class="esc-text">Chinese ISR capability expansion — Bejucal facility upgrade progresses unchecked during US policy stasis, reducing US decision superiority window in Caribbean basin.</div></div>
+          <div class="escalation-item"><div class="esc-sev"><span class="badge badge-amber">MOD</span></div><div class="esc-text">Engagement backlash — premature normalization announcement without Cuban reciprocal action triggers Florida political backlash that forecloses further administrative flexibility.</div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">RECOMMENDED NEXT ANALYTICAL MOVE</div>
+          <div class="next-move">
+            Commission a structured red team assessment specifically targeting the Chinese blocking dynamic: model the conditions under which Beijing would accept rather than resist limited US-Cuba normalization, to determine whether any normalization pathway exists that does not require China to actively oppose it.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">REVERSAL CONDITIONS</div>
+          <div class="reversal-item"><i class="ti ti-rotate" style="color:#BA7517; font-size:14px;" aria-hidden="true"></i><div>If Cuban government signals explicit acceptance of governance benchmarks, phased normalization likelihood upgrades from MODERATE to HIGH.</div></div>
+          <div class="reversal-item"><i class="ti ti-rotate" style="color:#BA7517; font-size:14px;" aria-hidden="true"></i><div>If China publicly endorses US-Cuba normalization, the blocking dynamic assessment reverses entirely and requires full re-calibration.</div></div>
+          <div class="reversal-item"><i class="ti ti-rotate" style="color:#BA7517; font-size:14px;" aria-hidden="true"></i><div>If congressional majority shifts to support statutory reform, the full normalization pathway becomes viable within 12-18 months rather than 36+.</div></div>
+        </div>
+      </div>
+
+      <!-- API -->
+      <div class="section" id="sec-api">
+        <div class="card">
+          <div class="card-title">FASTAPI ENDPOINTS — localhost:8000</div>
+          <div class="endpoint-row"><div class="ep-method" style="color:#0F6E56;">GET</div><div class="ep-path">/</div><div class="ep-desc">System status</div></div>
+          <div class="endpoint-row"><div class="ep-method" style="color:#0F6E56;">GET</div><div class="ep-path">/health</div><div class="ep-desc">API key + model check</div></div>
+          <div class="endpoint-row"><div class="ep-method" style="color:#185FA5;">POST</div><div class="ep-path">/analyze</div><div class="ep-desc">Run full pipeline</div></div>
+          <div class="endpoint-row"><div class="ep-method" style="color:#185FA5;">POST</div><div class="ep-path">/sample/cuba</div><div class="ep-desc">Cuba flagship query</div></div>
+          <div class="endpoint-row"><div class="ep-method" style="color:#0F6E56;">GET</div><div class="ep-path">/runs</div><div class="ep-desc">List all prior runs</div></div>
+          <div class="endpoint-row"><div class="ep-method" style="color:#0F6E56;">GET</div><div class="ep-path">/runs/{run_id}</div><div class="ep-desc">Single run detail</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title">CURL EXAMPLE — CUBA SAMPLE RUN</div>
+          <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px; font-family: var(--font-mono); font-size: 12px; color: var(--color-text-primary); line-height: 1.7;">
+            curl -X POST http://localhost:8000/sample/cuba<br><br>
+            <span style="color: var(--color-text-secondary)"># custom query with sources</span><br>
+            curl -X POST http://localhost:8000/analyze \<br>
+            &nbsp; -H "Content-Type: application/json" \<br>
+            &nbsp; -d '{"query": "...", "sources": [...]}'
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">FRONTEND INTEGRATION — GITHUB PAGES</div>
+          <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px; font-family: var(--font-mono); font-size: 12px; color: var(--color-text-primary); line-height: 1.7;">
+            <span style="color: var(--color-text-secondary)">// In your existing HTML/JS frontend</span><br>
+            const res = await fetch(<br>
+            &nbsp; 'https://your-api.fly.dev/sample/cuba',<br>
+            &nbsp; { method: 'POST' }<br>
+            );<br>
+            const { executive_brief } = await res.json();<br>
+            renderBrief(executive_brief);
+          </div>
+        </div>
+      </div>
+
+      <!-- RUNS -->
+      <div class="section" id="sec-runs">
+        <div class="card">
+          <div class="card-title">RUN HISTORY — runs.json AUDIT LOG</div>
+          <div class="run-row" style="font-size:11px; color: var(--color-text-secondary);">
+            <div class="run-id">Run ID</div>
+            <div class="run-query">Query (truncated)</div>
+            <div class="run-ceiling">Ceiling</div>
+          </div>
+          <div class="run-row">
+            <div class="run-id">a3f2c1d8</div>
+            <div class="run-query">Cuba transition from adversarial liability to hemispheric stabilization...</div>
+            <div class="run-ceiling"><span class="badge badge-blue">MODERATE</span></div>
+          </div>
+          <div class="run-row" style="opacity:0.5;">
+            <div class="run-id">—</div>
+            <div class="run-query" style="color: var(--color-text-secondary); font-style:italic;">Future runs appear here automatically</div>
+            <div class="run-ceiling"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">AUDIT LOG FORMAT</div>
+          <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px; font-family: var(--font-mono); font-size: 11px; color: var(--color-text-primary); line-height: 1.7;">
+            {<br>
+            &nbsp; "run_id": "a3f2c1d8-...",<br>
+            &nbsp; "completed_at": "2026-05-17T...",<br>
+            &nbsp; "query": "Cuba transition...",<br>
+            &nbsp; "signal_count": 8,<br>
+            &nbsp; "confidence_ceiling": "MODERATE",<br>
+            &nbsp; "errors": [],<br>
+            &nbsp; "executive_brief": { ... },<br>
+            &nbsp; "full_state": { ... }<br>
+            }
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function showSection(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  el.classList.add('active');
+}
+</script>
